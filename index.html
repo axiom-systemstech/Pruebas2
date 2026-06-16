@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gestor de Suscripciones · 3D</title>
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- jsPDF y html2canvas para PDF/PNG -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            transition: background 0.25s, color 0.2s, border 0.2s;
+        }
+
+        body {
+            background: #f5f7fa;
+            color: #1e293b;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* modo oscuro */
+        body.dark {
+            background: #0f172a;
+            color: #e2e8f0;
+        }
+        body.dark .card {
+            background: #1e293b;
+            border-color: #334155;
+        }
+        body.dark .btn-outline {
+            border-color: #475569;
+            color: #cbd5e1;
+        }
+        body.dark .btn-outline:hover {
+            background: #334155;
+        }
+        body.dark .input-group input {
+            background: #1e293b;
+            color: #f1f5f9;
+            border-color: #475569;
+        }
+        body.dark .badge {
+            background: #2d3b50;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.2rem;
+            width: 100%;
+            flex: 1;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        h1 small {
+            font-size: 0.9rem;
+            font-weight: 400;
+            opacity: 0.7;
+        }
+
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 40px;
+            border: none;
+            background: #1e293b;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .btn:hover {
+            transform: scale(0.97);
+            opacity: 0.9;
+        }
+        .btn-primary {
+            background: #2563eb;
+        }
+        .btn-success {
+            background: #16a34a;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #1e293b;
+            color: #1e293b;
+        }
+        body.dark .btn-outline {
+            border-color: #94a3b8;
+            color: #e2e8f0;
+        }
+        .btn-outline:hover {
+            background: #1e293b;
+            color: white;
+        }
+        body.dark .btn-outline:hover {
+            background: #334155;
+        }
+
+        /* calculadora flotante */
+        .calc-box {
+            background: white;
+            border-radius: 40px;
+            padding: 0.4rem 1rem 0.4rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            border: 1px solid #e9edf2;
+            margin-bottom: 1.5rem;
+        }
+        body.dark .calc-box {
+            background: #1e293b;
+            border-color: #334155;
+        }
+        .calc-box span {
+            font-weight: 600;
+        }
+        .calc-box input {
+            width: 80px;
+            padding: 0.4rem 0.6rem;
+            border-radius: 30px;
+            border: 1px solid #d1d9e6;
+            background: #f8fafc;
+            text-align: center;
+            font-weight: 600;
+        }
+        body.dark .calc-box input {
+            background: #0f172a;
+            border-color: #475569;
+            color: white;
+        }
+        .calc-box .btn {
+            padding: 0.3rem 0.9rem;
+            font-size: 1.2rem;
+            border-radius: 30px;
+        }
+
+        /* grid suscripciones */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 1.2rem;
+            margin: 1.5rem 0;
+        }
+
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 1rem 0.8rem;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.02);
+            border: 1px solid #eef2f6;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: all 0.2s;
+            cursor: pointer;
+            user-select: none;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: #2563eb;
+        }
+        .card img {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+            margin-bottom: 0.4rem;
+            filter: grayscale(0%);
+        }
+        body.dark .card img {
+            filter: brightness(0.9);
+        }
+        .card .nombre {
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        .card .precio {
+            font-size: 0.85rem;
+            opacity: 0.7;
+            margin: 0.2rem 0;
+        }
+        .card .plan {
+            font-size: 0.7rem;
+            background: #eef2f6;
+            padding: 0.15rem 0.8rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin-top: 0.2rem;
+        }
+        body.dark .card .plan {
+            background: #2d3b50;
+        }
+        .card .toggle-btn {
+            margin-top: 0.6rem;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 40px;
+            padding: 0.2rem 1rem;
+            font-weight: 600;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+        .card .toggle-btn.off {
+            background: #94a3b8;
+        }
+        .badge {
+            background: #e9edf2;
+            padding: 0.2rem 0.7rem;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        /* footer y sección de descargas */
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin: 2rem 0 1.5rem;
+        }
+
+        #suscripciones-activas {
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* preview para captura */
+        #captura-preview {
+            position: fixed;
+            top: -9999px;
+            left: -9999px;
+            width: 800px;
+            background: white;
+            padding: 2rem;
+            border-radius: 32px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            z-index: 999;
+            color: #0f172a;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            align-items: center;
+            justify-content: center;
+        }
+        #captura-preview .item-preview {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 80px;
+        }
+        #captura-preview img {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+            filter: grayscale(0%);
+        }
+        #captura-preview .nombre-preview {
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        #captura-preview .precio-preview {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        /* responsive */
+        @media (max-width: 600px) {
+            h1 { font-size: 1.4rem; }
+            .grid { grid-template-columns: repeat(2, 1fr); }
+            .calc-box { padding: 0.3rem 0.8rem; }
+        }
+
+        /* three.js canvas */
+        #three-canvas {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0.4;
+            z-index: 10;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        body.dark #three-canvas {
+            opacity: 0.6;
+        }
+
+        /* Toast mensaje para evitar alert() */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1e293b;
+            color: #fff;
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            opacity: 0;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
+        }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>📋 Suscripciones <small>3D</small></h1>
+            <div class="toolbar">
+                <button class="btn btn-outline" id="toggleTheme">🌓 Modo</button>
+                <button class="btn btn-success" id="btnPng">⬇️ PNG</button>
+                <button class="btn btn-primary" id="btnPdf">⬇️ PDF</button>
+            </div>
+        </header>
+
+        <!-- Calculadora integrada -->
+        <div class="calc-box">
+            <span>💰 Total</span>
+            <span id="totalCalculo">0.00 €</span>
+            <input type="number" id="inputSuma" value="0" step="0.01" placeholder="+/-">
+            <button class="btn btn-primary" id="btnSumar">➕</button>
+            <button class="btn btn-outline" id="btnRestar">➖</button>
+            <button class="btn btn-outline" id="btnResetCalc">↺</button>
+        </div>
+
+        <!-- Grid de plataformas -->
+        <div id="gridSuscripciones" class="grid"></div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <p id="suscripciones-activas">🟢 0 suscripciones activas</p>
+            <span class="badge" id="contadorTotal">20 plataformas</span>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-outline" id="resetAll">🔄 Reiniciar</button>
+        </div>
+    </div>
+
+    <!-- elemento oculto para captura PNG/PDF -->
+    <div id="captura-preview"></div>
+
+    <!-- three.js 3D decorativo -->
+    <div id="three-canvas"></div>
+
+    <!-- Toast de notificaciones -->
+    <div id="toast" class="toast">Mensaje aquí</div>
+
+    <script>
+        (function() {
+            // ----- LISTA DE 20 PLATAFORMAS REALES con precios y planes -----
+            const PLATAFORMAS = [
+                { id: 'netflix', nombre: 'Netflix', plan: 'Estándar', precio: 12.99, logo: 'https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/netflix.svg' },
+                { id: 'spotify', nombre: 'Spotify', plan: 'Individual', precio: 9.99, logo: 'https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/spotify.svg' },
+                { id: 'amazon', nombre: 'Amazon Prime', plan: 'Mensual', precio: 14.99, logo: 'https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/amazonprime.svg' },
+                { id: 'disney', nombre: 'Disney+', plan: 'Estándar', precio: 8.99, logo: 'https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/disneyplus.svg' },
+                { id: 'hbo', nombre: 'Max (HBO)', plan: 'Mensual', precio: 9.99, logo: 'https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/hbomax.svg' },
+                { id: 'apple', nombre: 'Apple Music', plan: 'Individual', precio: 10.99, logo: 'https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/applemusic.svg' },
+                { id: 'youtube', nombre: 'YouTube Premium', plan: 'Mensual', precio: 11.99, logo: 'https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/youtubemusic.svg' },
+                { id: 'twitch', nombre: 'Twitch Turbo', plan: 'Mensual', precio: 8.99, logo: 'https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/twitch.svg' },
+                { id: 'dropbox', nombre: 'Dropbox Plus', plan: '2TB', precio: 9.99, logo: 'https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/dropbox.svg' },
+                { id: 'googleone', nombre: 'Google One', plan: '200GB', precio: 2.99, logo: 'https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/googleone.svg' },
+                { id: 'xbox', nombre: 'Xbox Game Pass', plan: 'Ultimate', precio: 14.99, logo: 'https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/xbox.svg' },
+                { id: 'playstation', nombre: 'PS Plus', plan: 'Extra', precio: 13.99, logo: 'https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/playstation.svg' },
+                { id: 'adobe', nombre: 'Adobe Creative', plan: 'Fotografía', precio: 19.99, logo: 'https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/adobe.svg' },
+                { id: 'notion', nombre: 'Notion', plan: 'Personal', precio: 4.99, logo: 'https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/notion.svg' },
+                { id: 'slack', nombre: 'Slack Pro', plan: 'Mensual', precio: 7.25, logo: 'https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/slack.svg' },
+                { id: 'zoom', nombre: 'Zoom Pro', plan: 'Mensual', precio: 14.99, logo: 'https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/zoom.svg' },
+                { id: 'canva', nombre: 'Canva Pro', plan: 'Mensual', precio: 12.99, logo: 'https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/canva.svg' },
+                { id: 'office', nombre: 'Microsoft 365', plan: 'Personal', precio: 6.99, logo: 'https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/microsoftoffice.svg' },
+                { id: 'evernote', nombre: 'Evernote', plan: 'Personal', precio: 7.99, logo: 'https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/evernote.svg' },
+                { id: 'tidal', nombre: 'Tidal HiFi', plan: 'Mensual', precio: 19.99, logo: 'https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/tidal.svg' }
+            ];
+
+            // Estado: guardamos activas en localStorage de forma segura
+            let suscripcionesActivas = [];
+            try {
+                suscripcionesActivas = JSON.parse(localStorage.getItem('suscripciones_activas')) || [];
+            } catch (e) {
+                suscripcionesActivas = [];
+            }
+            
+            // total calculadora
+            let totalCalc = 0;
+
+            const grid = document.getElementById('gridSuscripciones');
+            const totalSpan = document.getElementById('totalCalculo');
+            const contadorActivas = document.getElementById('suscripciones-activas');
+            const inputSuma = document.getElementById('inputSuma');
+            const toastEl = document.getElementById('toast');
+
+            // ------ Sistema de Toast alternativo a Alert ------
+            function showNotification(text) {
+                toastEl.textContent = text;
+                toastEl.classList.add('show');
+                setTimeout(() => {
+                    toastEl.classList.remove('show');
+                }, 2500);
+            }
+
+            // ------ Renderizar grid ------
+            function renderizar() {
+                grid.innerHTML = '';
+                let activas = 0;
+
+                PLATAFORMAS.forEach((p) => {
+                    const activo = suscripcionesActivas.includes(p.id);
+                    if (activo) activas++;
+
+                    const card = document.createElement('div');
+                    card.className = 'card';
+
+                    const img = document.createElement('img');
+                    img.src = p.logo;
+                    img.alt = p.nombre;
+                    img.loading = 'lazy';
+                    // Fallback en caso de que falle la carga del SVG desde CDN
+                    img.onerror = () => {
+                        img.style.display = 'none';
+                        const emojiFallback = document.createElement('span');
+                        emojiFallback.style.fontSize = '2rem';
+                        emojiFallback.style.marginBottom = '0.4rem';
+                        emojiFallback.textContent = '📺';
+                        card.insertBefore(emojiFallback, card.firstChild);
+                    };
+                    card.appendChild(img);
+
+                    const nombre = document.createElement('div');
+                    nombre.className = 'nombre';
+                    nombre.textContent = p.nombre;
+                    card.appendChild(nombre);
+
+                    const precio = document.createElement('div');
+                    precio.className = 'precio';
+                    precio.textContent = `${p.precio.toFixed(2)} €`;
+                    card.appendChild(precio);
+
+                    const plan = document.createElement('div');
+                    plan.className = 'plan';
+                    plan.textContent = p.plan;
+                    card.appendChild(plan);
+
+                    const toggle = document.createElement('button');
+                    toggle.className = `toggle-btn ${activo ? '' : 'off'}`;
+                    toggle.textContent = activo ? '✔ Activa' : '➕ Añadir';
+                    toggle.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        toggleSuscripcion(p.id);
+                    });
+                    card.appendChild(toggle);
+
+                    // click en card toggle
+                    card.addEventListener('click', () => {
+                        toggleSuscripcion(p.id);
+                    });
+
+                    grid.appendChild(card);
+                });
+
+                // actualizar contadores y total
+                const total = suscripcionesActivas.reduce((acc, id) => {
+                    const plat = PLATAFORMAS.find(p => p.id === id);
+                    return acc + (plat ? plat.precio : 0);
+                }, 0);
+
+                totalSpan.textContent = total.toFixed(2) + ' €';
+                contadorActivas.textContent = `🟢 ${activas} suscripciones activas`;
+                document.getElementById('contadorTotal').textContent = `${PLATAFORMAS.length} plataformas`;
+
+                // guardar en localStorage
+                try {
+                    localStorage.setItem('suscripciones_activas', JSON.stringify(suscripcionesActivas));
+                } catch (e) {}
+            }
+
+            // ------ toggle suscripción ------
+            function toggleSuscripcion(id) {
+                const idx = suscripcionesActivas.indexOf(id);
+                if (idx > -1) {
+                    suscripcionesActivas.splice(idx, 1);
+                } else {
+                    suscripcionesActivas.push(id);
+                }
+                renderizar();
+                actualizarCalculoTotal();
+            }
+
+            // ------ calculadora: sumar/restar (modifica total) ------
+            function actualizarCalculoTotal() {
+                const total = suscripcionesActivas.reduce((acc, id) => {
+                    const plat = PLATAFORMAS.find(p => p.id === id);
+                    return acc + (plat ? plat.precio : 0);
+                }, 0);
+                totalCalc = total;
+                totalSpan.textContent = totalCalc.toFixed(2) + ' €';
+            }
+
+            function operar(signo) {
+                let val = parseFloat(inputSuma.value);
+                if (isNaN(val)) val = 0;
+                if (signo === 'suma') totalCalc += val;
+                else if (signo === 'resta') totalCalc -= val;
+                if (totalCalc < 0) totalCalc = 0;
+                totalSpan.textContent = totalCalc.toFixed(2) + ' €';
+                inputSuma.value = '';
+            }
+
+            // ------ generar preview para PNG/PDF ------
+            function generarPreview() {
+                const preview = document.getElementById('captura-preview');
+                preview.innerHTML = '';
+                const activas = suscripcionesActivas.map(id => PLATAFORMAS.find(p => p.id === id)).filter(Boolean);
+                
+                if (activas.length === 0) {
+                    const msg = document.createElement('p');
+                    msg.style.fontWeight = '700';
+                    msg.style.fontSize = '1.2rem';
+                    msg.textContent = 'No hay suscripciones activas seleccionadas';
+                    preview.appendChild(msg);
+                } else {
+                    activas.forEach(p => {
+                        const div = document.createElement('div');
+                        div.className = 'item-preview';
+                        
+                        const img = document.createElement('img');
+                        img.src = p.logo;
+                        img.alt = p.nombre;
+                        img.onerror = () => {
+                            img.style.display = 'none';
+                        };
+                        div.appendChild(img);
+                        
+                        const nom = document.createElement('div');
+                        nom.className = 'nombre-preview';
+                        nom.textContent = p.nombre;
+                        div.appendChild(nom);
+                        
+                        const prec = document.createElement('div');
+                        prec.className = 'precio-preview';
+                        prec.textContent = `${p.precio.toFixed(2)} €`;
+                        div.appendChild(prec);
+                        
+                        preview.appendChild(div);
+                    });
+                    
+                    // total
+                    const total = activas.reduce((acc, p) => acc + p.precio, 0);
+                    const totalDiv = document.createElement('div');
+                    totalDiv.style.width = '100%';
+                    totalDiv.style.textAlign = 'center';
+                    totalDiv.style.marginTop = '2rem';
+                    totalDiv.style.fontWeight = '800';
+                    totalDiv.style.fontSize = '1.4rem';
+                    totalDiv.textContent = `Total Mensual: ${total.toFixed(2)} €`;
+                    preview.appendChild(totalDiv);
+                }
+                return preview;
+            }
+
+            // ------ descargar PNG ------
+            function descargarPNG() {
+                showNotification("Generando imagen PNG...");
+                const preview = generarPreview();
+                preview.style.position = 'fixed';
+                preview.style.top = '0';
+                preview.style.left = '0';
+                preview.style.width = '800px';
+                preview.style.background = 'white';
+                preview.style.padding = '2.5rem';
+                preview.style.zIndex = '9999';
+                preview.style.display = 'flex';
+                preview.style.flexWrap = 'wrap';
+                preview.style.justifyContent = 'center';
+                preview.style.alignItems = 'center';
+                preview.style.gap = '2rem';
+                preview.style.borderRadius = '0';
+                document.body.appendChild(preview);
+
+                setTimeout(() => {
+                    html2canvas(preview, { scale: 2, backgroundColor: '#ffffff', useCORS: true }).then(canvas => {
+                        const link = document.createElement('a');
+                        link.download = 'Mis_Suscripciones.png';
+                        link.href = canvas.toDataURL('image/png');
+                        link.click();
+                        document.body.removeChild(preview);
+                        showNotification("¡PNG descargado con éxito!");
+                    }).catch((err) => {
+                        console.error(err);
+                        document.body.removeChild(preview);
+                        showNotification("Error al generar la imagen.");
+                    });
+                }, 500);
+            }
+
+            // ------ descargar PDF ------
+            function descargarPDF() {
+                showNotification("Generando reporte PDF...");
+                const preview = generarPreview();
+                preview.style.position = 'fixed';
+                preview.style.top = '0';
+                preview.style.left = '0';
+                preview.style.width = '800px';
+                preview.style.background = 'white';
+                preview.style.padding = '2.5rem';
+                preview.style.zIndex = '9999';
+                preview.style.display = 'flex';
+                preview.style.flexWrap = 'wrap';
+                preview.style.justifyContent = 'center';
+                preview.style.alignItems = 'center';
+                preview.style.gap = '2rem';
+                preview.style.borderRadius = '0';
+                document.body.appendChild(preview);
+
+                setTimeout(() => {
+                    html2canvas(preview, { scale: 2, backgroundColor: '#ffffff', useCORS: true }).then(canvas => {
+                        const imgData = canvas.toDataURL('image/png');
+                        const { jsPDF } = window.jspdf;
+                        const pdf = new jsPDF('p', 'mm', 'a4');
+                        const pdfWidth = pdf.internal.pageSize.getWidth();
+                        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+                        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                        pdf.save('Reporte_Suscripciones.pdf');
+                        document.body.removeChild(preview);
+                        showNotification("¡PDF exportado con éxito!");
+                    }).catch((err) => {
+                        console.error(err);
+                        document.body.removeChild(preview);
+                        showNotification("Error al generar el PDF.");
+                    });
+                }, 500);
+            }
+
+            // ------ reset ------
+            function resetTodo() {
+                suscripcionesActivas = [];
+                totalCalc = 0;
+                totalSpan.textContent = '0.00 €';
+                inputSuma.value = '';
+                try {
+                    localStorage.setItem('suscripciones_activas', JSON.stringify(suscripcionesActivas));
+                } catch (e) {}
+                renderizar();
+                showNotification("Suscripciones reiniciadas.");
+            }
+
+            // ------ Three.js decorativo (esfera y anillos) ------
+            function initThree() {
+                const container = document.getElementById('three-canvas');
+                if (!container || typeof THREE === 'undefined') return;
+
+                const scene = new THREE.Scene();
+                const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 1000);
+                camera.position.set(0, 0, 4);
+
+                const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+                const size = 140;
+                renderer.setSize(size, size);
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                container.appendChild(renderer.domElement);
+
+                // Geometría principal estilizada
+                const geometry = new THREE.IcosahedronGeometry(1, 0);
+                const material = new THREE.MeshStandardMaterial({
+                    color: 0x2563eb,
+                    wireframe: false,
+                    roughness: 0.2,
+                    metalness: 0.8,
+                    transparent: true,
+                    opacity: 0.7
+                });
+                const sphere = new THREE.Mesh(geometry, material);
+                scene.add(sphere);
+
+                // Estructura externa
+                const wireframe = new THREE.Mesh(
+                    new THREE.IcosahedronGeometry(1.15, 1),
+                    new THREE.MeshBasicMaterial({ wireframe: true, color: 0x94a3b8, transparent: true, opacity: 0.3 })
+                );
+                scene.add(wireframe);
+
+                // Luces para un renderizado brillante
+                const ambient = new THREE.AmbientLight(0xffffff, 0.8);
+                scene.add(ambient);
+                const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
+                dirLight.position.set(1, 2, 3);
+                scene.add(dirLight);
+
+                let time = 0;
+                function animate() {
+                    requestAnimationFrame(animate);
+                    time += 0.005;
+                    sphere.rotation.x = time * 0.4;
+                    sphere.rotation.y = time * 0.6;
+                    wireframe.rotation.x = -time * 0.2;
+                    wireframe.rotation.y = -time * 0.3;
+                    renderer.render(scene, camera);
+                }
+                animate();
+
+                // Responsive para el canvas
+                window.addEventListener('resize', () => {
+                    const w = Math.min(140, window.innerWidth * 0.25);
+                    renderer.setSize(w, w);
+                });
+            }
+
+            // ------ Event listeners ------
+            document.getElementById('toggleTheme').addEventListener('click', () => {
+                document.body.classList.toggle('dark');
+            });
+
+            document.getElementById('btnSumar').addEventListener('click', () => operar('suma'));
+            document.getElementById('btnRestar').addEventListener('click', () => operar('resta'));
+            document.getElementById('btnResetCalc').addEventListener('click', () => {
+                totalCalc = 0;
+                totalSpan.textContent = '0.00 €';
+                inputSuma.value = '0';
+                showNotification("Calculadora reiniciada.");
+            });
+
+            document.getElementById('btnPng').addEventListener('click', descargarPNG);
+            document.getElementById('btnPdf').addEventListener('click', descargarPDF);
+            document.getElementById('resetAll').addEventListener('click', resetTodo);
+
+            // Enter en input suma
+            document.getElementById('inputSuma').addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') operar('suma');
+            });
+
+            // Inicializar al cargar el DOM
+            window.onload = function() {
+                renderizar();
+                initThree();
+                actualizarCalculoTotal();
+            };
+
+        })();
+    </script>
+</body>
+</html>

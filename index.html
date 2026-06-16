@@ -3,699 +3,528 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gestor de Suscripciones · 3D</title>
-    <!-- Three.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <!-- jsPDF y html2canvas para PDF/PNG -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <title>🎨 PowerPoint de Dibujo</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            transition: background 0.25s, color 0.2s, border 0.2s;
+            font-family: 'Segoe UI', system-ui, sans-serif;
         }
 
         body {
-            background: #f5f7fa;
-            color: #1e293b;
-            min-height: 100vh;
+            background: #e8ecf1;
             display: flex;
             flex-direction: column;
+            align-items: center;
+            padding: 1rem;
+            min-height: 100vh;
         }
 
-        /* modo oscuro */
-        body.dark {
-            background: #0f172a;
-            color: #e2e8f0;
-        }
-        body.dark .card {
-            background: #1e293b;
-            border-color: #334155;
-        }
-        body.dark .btn-outline {
-            border-color: #475569;
-            color: #cbd5e1;
-        }
-        body.dark .btn-outline:hover {
-            background: #334155;
-        }
-        body.dark .input-group input {
-            background: #1e293b;
-            color: #f1f5f9;
-            border-color: #475569;
-        }
-        body.dark .badge {
-            background: #2d3b50;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 1.2rem;
+        .app-container {
+            max-width: 1100px;
             width: 100%;
-            flex: 1;
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+            padding: 1.5rem;
+            transition: all 0.2s;
         }
 
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        h1 small {
-            font-size: 0.9rem;
-            font-weight: 400;
-            opacity: 0.7;
-        }
-
+        /* toolbar superior */
         .toolbar {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.6rem;
+            gap: 0.6rem 1rem;
             align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            padding: 0.6rem 1rem;
+            background: #f8fafc;
+            border-radius: 60px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .tool-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            align-items: center;
+            background: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 40px;
+            border: 1px solid #eef2f6;
+        }
+
+        .tool-group label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #475569;
+            margin-right: 0.2rem;
         }
 
         .btn {
-            padding: 0.5rem 1rem;
+            padding: 0.4rem 1rem;
             border-radius: 40px;
             border: none;
-            background: #1e293b;
-            color: white;
+            background: #f1f4f9;
+            color: #1e293b;
             font-weight: 600;
+            font-size: 0.85rem;
             cursor: pointer;
+            transition: all 0.15s;
             display: inline-flex;
             align-items: center;
-            gap: 0.4rem;
-            font-size: 0.9rem;
-            transition: all 0.2s;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            gap: 0.3rem;
         }
         .btn:hover {
-            transform: scale(0.97);
-            opacity: 0.9;
+            background: #e2e8f0;
+            transform: scale(0.96);
         }
         .btn-primary {
             background: #2563eb;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #1d4ed8;
         }
         .btn-success {
             background: #16a34a;
+            color: white;
+        }
+        .btn-success:hover {
+            background: #15803d;
+        }
+        .btn-danger {
+            background: #dc2626;
+            color: white;
+        }
+        .btn-danger:hover {
+            background: #b91c1c;
         }
         .btn-outline {
             background: transparent;
-            border: 2px solid #1e293b;
-            color: #1e293b;
-        }
-        body.dark .btn-outline {
-            border-color: #94a3b8;
-            color: #e2e8f0;
+            border: 2px solid #cbd5e1;
         }
         .btn-outline:hover {
-            background: #1e293b;
-            color: white;
-        }
-        body.dark .btn-outline:hover {
-            background: #334155;
+            background: #f1f5f9;
         }
 
-        /* calculadora flotante */
-        .calc-box {
+        input[type="color"] {
+            width: 36px;
+            height: 36px;
+            border: 2px solid #e2e8f0;
+            border-radius: 50%;
+            padding: 2px;
+            cursor: pointer;
             background: white;
-            border-radius: 40px;
-            padding: 0.4rem 1rem 0.4rem 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            flex-wrap: wrap;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-            border: 1px solid #e9edf2;
         }
-        body.dark .calc-box {
-            background: #1e293b;
-            border-color: #334155;
-        }
-        .calc-box span {
-            font-weight: 600;
-        }
-        .calc-box input {
+        input[type="range"] {
             width: 80px;
-            padding: 0.4rem 0.6rem;
-            border-radius: 30px;
-            border: 1px solid #d1d9e6;
-            background: #f8fafc;
-            text-align: center;
+            cursor: pointer;
+        }
+        .size-indicator {
             font-weight: 600;
-        }
-        body.dark .calc-box input {
-            background: #0f172a;
-            border-color: #475569;
-            color: white;
-        }
-        .calc-box .btn {
-            padding: 0.3rem 0.9rem;
-            font-size: 1.2rem;
-            border-radius: 30px;
+            font-size: 0.8rem;
+            min-width: 30px;
+            text-align: center;
         }
 
-        /* grid suscripciones */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 1.2rem;
-            margin: 2rem 0;
-        }
-
-        .card {
+        /* lienzo */
+        .canvas-wrapper {
+            position: relative;
             background: white;
             border-radius: 24px;
-            padding: 1rem 0.8rem;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.02);
-            border: 1px solid #eef2f6;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            transition: all 0.2s;
-            cursor: pointer;
-        }
-        .card:hover {
-            transform: translateY(-4px);
-            border-color: #2563eb;
-        }
-        .card img {
-            width: 48px;
-            height: 48px;
-            object-fit: contain;
-            margin-bottom: 0.4rem;
-            filter: grayscale(0%);
-        }
-        body.dark .card img {
-            filter: brightness(0.9);
-        }
-        .card .nombre {
-            font-weight: 700;
-            font-size: 0.9rem;
-        }
-        .card .precio {
-            font-size: 0.85rem;
-            opacity: 0.7;
-            margin: 0.2rem 0;
-        }
-        .card .plan {
-            font-size: 0.7rem;
-            background: #eef2f6;
-            padding: 0.15rem 0.8rem;
-            border-radius: 40px;
-            display: inline-block;
-            margin-top: 0.2rem;
-        }
-        body.dark .card .plan {
-            background: #2d3b50;
-        }
-        .card .toggle-btn {
-            margin-top: 0.6rem;
-            background: #2563eb;
-            color: white;
-            border: none;
-            border-radius: 40px;
-            padding: 0.2rem 1rem;
-            font-weight: 600;
-            font-size: 0.75rem;
-            cursor: pointer;
-        }
-        .card .toggle-btn.off {
-            background: #94a3b8;
-        }
-        .badge {
-            background: #e9edf2;
-            padding: 0.2rem 0.7rem;
-            border-radius: 40px;
-            font-size: 0.7rem;
-            font-weight: 600;
+            border: 2px solid #e2e8f0;
+            overflow: hidden;
+            box-shadow: inset 0 4px 12px rgba(0,0,0,0.02);
+            touch-action: none;
         }
 
-        /* footer y sección de descargas */
-        .actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            justify-content: center;
-            margin: 2rem 0 1.5rem;
-        }
-
-        #suscripciones-activas {
-            margin-top: 0.5rem;
-            font-weight: 500;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        /* preview para captura */
-        #captura-preview {
-            position: fixed;
-            top: -9999px;
-            left: -9999px;
-            width: 800px;
+        #canvasDibujo {
+            display: block;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 16 / 9;
             background: white;
-            padding: 2rem;
-            border-radius: 32px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-            z-index: 999;
-            color: #0f172a;
+            cursor: crosshair;
+            touch-action: none;
+        }
+
+        /* barra inferior */
+        .status-bar {
             display: flex;
             flex-wrap: wrap;
-            gap: 1.5rem;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
+            margin-top: 1rem;
+            gap: 0.8rem;
         }
-        #captura-preview .item-preview {
+
+        .color-palette {
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-width: 80px;
+            gap: 0.4rem;
+            flex-wrap: wrap;
         }
-        #captura-preview img {
-            width: 48px;
-            height: 48px;
-            object-fit: contain;
-            filter: grayscale(100%);
-        }
-        #captura-preview .nombre-preview {
-            font-weight: 700;
-            font-size: 0.9rem;
-        }
-        #captura-preview .precio-preview {
-            font-size: 0.8rem;
-            opacity: 0.7;
-        }
-
-        /* responsive */
-        @media (max-width: 600px) {
-            h1 { font-size: 1.4rem; }
-            .grid { grid-template-columns: repeat(2, 1fr); }
-            .calc-box { padding: 0.3rem 0.8rem; }
-        }
-
-        /* three.js canvas */
-        #three-canvas {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 140px;
-            height: 140px;
+        .color-swatch {
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
-            pointer-events: none;
-            opacity: 0.25;
-            z-index: 0;
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: 0.1s;
         }
-        body.dark #three-canvas {
-            opacity: 0.3;
+        .color-swatch:hover {
+            transform: scale(1.15);
         }
+        .color-swatch.active {
+            border-color: #1e293b;
+            box-shadow: 0 0 0 2px white, 0 0 0 4px #1e293b;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        /* Responsive */
+        @media (max-width: 700px) {
+            .app-container { padding: 1rem; }
+            .toolbar { border-radius: 24px; padding: 0.8rem; }
+            .tool-group { padding: 0.2rem 0.4rem; }
+            .btn { font-size: 0.75rem; padding: 0.3rem 0.7rem; }
+        }
+
+        /* modo oscuro opcional (estilo PowerPoint oscuro) */
+        body.dark .app-container { background: #1e293b; }
+        body.dark .toolbar { background: #0f172a; border-color: #334155; }
+        body.dark .tool-group { background: #1e293b; border-color: #334155; }
+        body.dark .tool-group label { color: #94a3b8; }
+        body.dark .btn { background: #334155; color: #e2e8f0; }
+        body.dark .btn:hover { background: #475569; }
+        body.dark .btn-outline { border-color: #475569; }
+        body.dark .canvas-wrapper { border-color: #334155; }
+        body.dark .color-swatch.active { border-color: #e2e8f0; box-shadow: 0 0 0 2px #1e293b, 0 0 0 4px #e2e8f0; }
+        body.dark .status-bar { color: #cbd5e1; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <header>
-            <h1>📋 Suscripciones <small>3D</small></h1>
-            <div class="toolbar">
-                <button class="btn btn-outline" id="toggleTheme">🌓 Modo</button>
-                <button class="btn btn-success" id="btnPng">⬇️ PNG</button>
-                <button class="btn btn-primary" id="btnPdf">⬇️ PDF</button>
-            </div>
-        </header>
-
-        <!-- Calculadora integrada -->
-        <div class="calc-box">
-            <span>💰 Total</span>
-            <span id="totalCalculo">0.00 €</span>
-            <input type="number" id="inputSuma" value="0" step="0.01" placeholder="+/-">
-            <button class="btn btn-primary" id="btnSumar">➕</button>
-            <button class="btn btn-outline" id="btnRestar">➖</button>
-            <button class="btn btn-outline" id="btnResetCalc">↺</button>
+<div class="app-container">
+    <!-- Toolbar -->
+    <div class="toolbar" id="toolbar">
+        <div class="tool-group">
+            <label>🖊️ Herramienta</label>
+            <button class="btn btn-primary" id="toolPencil" title="Lápiz">✏️ Lápiz</button>
+            <button class="btn btn-outline" id="toolEraser" title="Borrador">🧹 Borrar</button>
+            <button class="btn btn-outline" id="toolLine" title="Línea recta">📏 Línea</button>
+            <button class="btn btn-outline" id="toolRect" title="Rectángulo">▭ Rect</button>
+            <button class="btn btn-outline" id="toolCircle" title="Círculo">⭕ Círculo</button>
         </div>
 
-        <!-- Grid de plataformas -->
-        <div id="gridSuscripciones" class="grid"></div>
-
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
-            <p id="suscripciones-activas">🟢 0 suscripciones activas</p>
-            <span class="badge" id="contadorTotal">20 plataformas</span>
+        <div class="tool-group">
+            <label>🎨 Color</label>
+            <input type="color" id="colorPicker" value="#2563eb">
         </div>
 
-        <div class="actions">
-            <button class="btn btn-outline" id="resetAll">🔄 Reiniciar</button>
+        <div class="tool-group">
+            <label>📏 Tamaño</label>
+            <input type="range" id="sizeSlider" min="1" max="40" value="6">
+            <span class="size-indicator" id="sizeDisplay">6</span>
+        </div>
+
+        <div class="tool-group">
+            <button class="btn btn-outline" id="undoBtn">↩️ Deshacer</button>
+            <button class="btn btn-danger" id="clearBtn">🗑️ Limpiar</button>
         </div>
     </div>
 
-    <!-- elemento oculto para captura PNG/PDF -->
-    <div id="captura-preview"></div>
+    <!-- Lienzo -->
+    <div class="canvas-wrapper">
+        <canvas id="canvasDibujo" width="1600" height="900"></canvas>
+    </div>
 
-    <!-- three.js 3D decorativo -->
-    <div id="three-canvas"></div>
+    <!-- Barra inferior -->
+    <div class="status-bar">
+        <div class="color-palette" id="palette">
+            <!-- colores predefinidos (se generan con JS) -->
+        </div>
+        <div class="action-buttons">
+            <button class="btn btn-outline" id="toggleThemeBtn">🌓 Modo</button>
+            <button class="btn btn-success" id="downloadPngBtn">⬇️ Descargar PNG</button>
+        </div>
+    </div>
+</div>
 
-    <script>
-        (function() {
-            // ----- LISTA DE 20 PLATAFORMAS REALES con precios y planes -----
-            const PLATAFORMAS = [
-                { id: 'netflix', nombre: 'Netflix', plan: 'Estándar', precio: 12.99, logo: 'https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/netflix.svg' },
-                { id: 'spotify', nombre: 'Spotify', plan: 'Individual', precio: 9.99, logo: 'https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/spotify.svg' },
-                { id: 'amazon', nombre: 'Amazon Prime', plan: 'Mensual', precio: 14.99, logo: 'https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/amazonprime.svg' },
-                { id: 'disney', nombre: 'Disney+', plan: 'Estándar', precio: 8.99, logo: 'https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/disneyplus.svg' },
-                { id: 'hbo', nombre: 'Max (HBO)', plan: 'Mensual', precio: 9.99, logo: 'https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/hbomax.svg' },
-                { id: 'apple', nombre: 'Apple Music', plan: 'Individual', precio: 10.99, logo: 'https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/applemusic.svg' },
-                { id: 'youtube', nombre: 'YouTube Premium', plan: 'Mensual', precio: 11.99, logo: 'https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/youtubemusic.svg' },
-                { id: 'twitch', nombre: 'Twitch Turbo', plan: 'Mensual', precio: 8.99, logo: 'https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/twitch.svg' },
-                { id: 'dropbox', nombre: 'Dropbox Plus', plan: '2TB', precio: 9.99, logo: 'https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/dropbox.svg' },
-                { id: 'googleone', nombre: 'Google One', plan: '200GB', precio: 2.99, logo: 'https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/googleone.svg' },
-                { id: 'xbox', nombre: 'Xbox Game Pass', plan: 'Ultimate', precio: 14.99, logo: 'https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/xbox.svg' },
-                { id: 'playstation', nombre: 'PS Plus', plan: 'Extra', precio: 13.99, logo: 'https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/playstation.svg' },
-                { id: 'adobe', nombre: 'Adobe Creative', plan: 'Fotografía', precio: 19.99, logo: 'https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/adobe.svg' },
-                { id: 'notion', nombre: 'Notion', plan: 'Personal', precio: 4.99, logo: 'https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/notion.svg' },
-                { id: 'slack', nombre: 'Slack Pro', plan: 'Mensual', precio: 7.25, logo: 'https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/slack.svg' },
-                { id: 'zoom', nombre: 'Zoom Pro', plan: 'Mensual', precio: 14.99, logo: 'https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/zoom.svg' },
-                { id: 'canva', nombre: 'Canva Pro', plan: 'Mensual', precio: 12.99, logo: 'https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/canva.svg' },
-                { id: 'office', nombre: 'Microsoft 365', plan: 'Personal', precio: 6.99, logo: 'https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/microsoftoffice.svg' },
-                { id: 'evernote', nombre: 'Evernote', plan: 'Personal', precio: 7.99, logo: 'https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/evernote.svg' },
-                { id: 'tidal', nombre: 'Tidal HiFi', plan: 'Mensual', precio: 19.99, logo: 'https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/tidal.svg' }
-            ];
+<script>
+    (function() {
+        // ------ Canvas y contexto ------
+        const canvas = document.getElementById('canvasDibujo');
+        const ctx = canvas.getContext('2d');
+        const rect = canvas.getBoundingClientRect();
 
-            // Estado: guardamos activas en localStorage
-            let suscripcionesActivas = JSON.parse(localStorage.getItem('suscripciones_activas')) || [];
-            // total calculadora
-            let totalCalc = 0;
+        // ------ Estado ------
+        let isDrawing = false;
+        let lastX = 0, lastY = 0;
+        let currentTool = 'pencil'; // pencil | eraser | line | rect | circle
+        let currentColor = '#2563eb';
+        let currentSize = 6;
+        let undoStack = [];
+        const MAX_UNDO = 30;
 
-            const grid = document.getElementById('gridSuscripciones');
-            const totalSpan = document.getElementById('totalCalculo');
-            const contadorActivas = document.getElementById('suscripciones-activas');
-            const inputSuma = document.getElementById('inputSuma');
+        // Guardar estado inicial (lienzo en blanco)
+        function saveState() {
+            if (undoStack.length >= MAX_UNDO) undoStack.shift();
+            undoStack.push(canvas.toDataURL());
+        }
 
-            // ------ Renderizar grid ------
-            function renderizar() {
-                grid.innerHTML = '';
-                let activas = 0;
+        function restoreState() {
+            if (undoStack.length === 0) return;
+            const img = new Image();
+            img.onload = () => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0);
+            };
+            img.src = undoStack.pop();
+        }
 
-                PLATAFORMAS.forEach((p, index) => {
-                    const activo = suscripcionesActivas.includes(p.id);
-                    if (activo) activas++;
+        // Limpiar y guardar estado
+        function clearCanvas() {
+            saveState();
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
 
-                    const card = document.createElement('div');
-                    card.className = 'card';
-
-                    const img = document.createElement('img');
-                    img.src = p.logo;
-                    img.alt = p.nombre;
-                    img.loading = 'lazy';
-                    card.appendChild(img);
-
-                    const nombre = document.createElement('div');
-                    nombre.className = 'nombre';
-                    nombre.textContent = p.nombre;
-                    card.appendChild(nombre);
-
-                    const precio = document.createElement('div');
-                    precio.className = 'precio';
-                    precio.textContent = `${p.precio.toFixed(2)} €`;
-                    card.appendChild(precio);
-
-                    const plan = document.createElement('div');
-                    plan.className = 'plan';
-                    plan.textContent = p.plan;
-                    card.appendChild(plan);
-
-                    const toggle = document.createElement('button');
-                    toggle.className = `toggle-btn ${activo ? '' : 'off'}`;
-                    toggle.textContent = activo ? '✔ Activa' : '➕ Añadir';
-                    toggle.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        toggleSuscripcion(p.id);
-                    });
-                    card.appendChild(toggle);
-
-                    // click en card toggle
-                    card.addEventListener('click', () => {
-                        toggleSuscripcion(p.id);
-                    });
-
-                    grid.appendChild(card);
-                });
-
-                // actualizar contadores y total
-                const total = suscripcionesActivas.reduce((acc, id) => {
-                    const plat = PLATAFORMAS.find(p => p.id === id);
-                    return acc + (plat ? plat.precio : 0);
-                }, 0);
-
-                totalSpan.textContent = total.toFixed(2) + ' €';
-                contadorActivas.textContent = `🟢 ${activas} suscripciones activas`;
-                document.getElementById('contadorTotal').textContent = `${PLATAFORMAS.length} plataformas`;
-
-                // guardar en localStorage
-                localStorage.setItem('suscripciones_activas', JSON.stringify(suscripcionesActivas));
+        // ------ Dibujar funciones ------
+        function startDraw(e) {
+            e.preventDefault();
+            const pos = getMousePos(e);
+            if (!pos) return;
+            isDrawing = true;
+            lastX = pos.x;
+            lastY = pos.y;
+            // Si es lápiz o borrador, comenzamos trazado
+            if (currentTool === 'pencil' || currentTool === 'eraser') {
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
             }
+            // Guardar estado al comenzar (para formas)
+            if (['line', 'rect', 'circle'].includes(currentTool)) {
+                saveState();
+            }
+        }
 
-            // ------ toggle suscripción ------
-            function toggleSuscripcion(id) {
-                const idx = suscripcionesActivas.indexOf(id);
-                if (idx > -1) {
-                    suscripcionesActivas.splice(idx, 1);
-                } else {
-                    suscripcionesActivas.push(id);
+        function draw(e) {
+            e.preventDefault();
+            if (!isDrawing) return;
+            const pos = getMousePos(e);
+            if (!pos) return;
+
+            const { x, y } = pos;
+
+            if (currentTool === 'pencil' || currentTool === 'eraser') {
+                ctx.lineWidth = currentSize;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.strokeStyle = currentTool === 'eraser' ? '#ffffff' : currentColor;
+                ctx.lineTo(x, y);
+                ctx.stroke();
+                // actualizar para siguiente segmento
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+            } else if (currentTool === 'line') {
+                // dibujar línea temporal (borrar y redibujar)
+                restoreState(); // volver al estado anterior (antes de empezar la línea)
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(x, y);
+                ctx.strokeStyle = currentColor;
+                ctx.lineWidth = currentSize;
+                ctx.lineCap = 'round';
+                ctx.stroke();
+            } else if (currentTool === 'rect') {
+                restoreState();
+                const w = x - lastX;
+                const h = y - lastY;
+                ctx.strokeStyle = currentColor;
+                ctx.lineWidth = currentSize;
+                ctx.strokeRect(lastX, lastY, w, h);
+            } else if (currentTool === 'circle') {
+                restoreState();
+                const radius = Math.sqrt((x - lastX) ** 2 + (y - lastY) ** 2);
+                ctx.beginPath();
+                ctx.arc(lastX, lastY, radius, 0, 2 * Math.PI);
+                ctx.strokeStyle = currentColor;
+                ctx.lineWidth = currentSize;
+                ctx.stroke();
+            }
+        }
+
+        function endDraw(e) {
+            if (!isDrawing) return;
+            isDrawing = false;
+            // Para lápiz y borrador guardamos estado al terminar
+            if (currentTool === 'pencil' || currentTool === 'eraser') {
+                saveState();
+            } else {
+                // Para formas, ya guardamos estado al empezar, pero al terminar guardamos otra vez para poder deshacer
+                // pero cuidado: restoreState en draw ya guarda, mejor guardar al final
+                // pero como usamos restoreState() en draw, el estado queda guardado.
+                // Añadimos uno extra para poder deshacer la forma completa
+                // mejor guardar al inicio y al final
+                saveState();
+            }
+            // En caso de formas, guardamos estado final
+            if (['line', 'rect', 'circle'].includes(currentTool)) {
+                // ya se guardó al inicio, pero añadimos uno para poder deshacer la forma completa
+                // pero para evitar duplicados, lo manejamos con cuidado
+                // mejor: en startDraw guardamos, en endDraw guardamos de nuevo
+                saveState();
+            }
+            ctx.beginPath(); // reset
+        }
+
+        function getMousePos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            let clientX, clientY;
+            if (e.touches) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+                e.preventDefault();
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+            const x = (clientX - rect.left) * scaleX;
+            const y = (clientY - rect.top) * scaleY;
+            return { x: Math.min(Math.max(x, 0), canvas.width), y: Math.min(Math.max(y, 0), canvas.height) };
+        }
+
+        // ------ Herramientas UI ------
+        function setTool(tool) {
+            currentTool = tool;
+            document.querySelectorAll('.tool-group .btn').forEach(b => b.classList.remove('btn-primary'));
+            if (tool === 'pencil') document.getElementById('toolPencil').classList.add('btn-primary');
+            else if (tool === 'eraser') document.getElementById('toolEraser').classList.add('btn-primary');
+            else if (tool === 'line') document.getElementById('toolLine').classList.add('btn-primary');
+            else if (tool === 'rect') document.getElementById('toolRect').classList.add('btn-primary');
+            else if (tool === 'circle') document.getElementById('toolCircle').classList.add('btn-primary');
+            canvas.style.cursor = tool === 'eraser' ? 'cell' : 'crosshair';
+        }
+
+        // ------ Paleta de colores ------
+        const coloresPredefinidos = [
+            '#2563eb', '#dc2626', '#16a34a', '#f59e0b', '#8b5cf6',
+            '#ec4899', '#14b8a6', '#f97316', '#64748b', '#000000',
+            '#ffffff', '#e2e8f0'
+        ];
+
+        function generarPaleta() {
+            const palette = document.getElementById('palette');
+            palette.innerHTML = '';
+            coloresPredefinidos.forEach(color => {
+                const swatch = document.createElement('div');
+                swatch.className = 'color-swatch';
+                swatch.style.background = color;
+                if (color === '#ffffff') swatch.style.border = '1px solid #cbd5e1';
+                swatch.dataset.color = color;
+                swatch.addEventListener('click', () => {
+                    document.getElementById('colorPicker').value = color;
+                    currentColor = color;
+                    document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+                    swatch.classList.add('active');
+                });
+                palette.appendChild(swatch);
+            });
+            // activar el primero
+            const first = palette.querySelector('.color-swatch');
+            if (first) first.classList.add('active');
+        }
+
+        // ------ Descargar PNG ------
+        function downloadPNG() {
+            const link = document.createElement('a');
+            link.download = 'dibujo_powerpoint.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        // ------ Inicializar ------
+        function init() {
+            // Guardar estado inicial
+            saveState();
+
+            // Eventos ratón y táctiles
+            canvas.addEventListener('mousedown', startDraw);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', endDraw);
+            canvas.addEventListener('mouseleave', endDraw);
+
+            canvas.addEventListener('touchstart', startDraw, { passive: false });
+            canvas.addEventListener('touchmove', draw, { passive: false });
+            canvas.addEventListener('touchend', endDraw, { passive: false });
+
+            // Herramientas
+            document.getElementById('toolPencil').addEventListener('click', () => setTool('pencil'));
+            document.getElementById('toolEraser').addEventListener('click', () => setTool('eraser'));
+            document.getElementById('toolLine').addEventListener('click', () => setTool('line'));
+            document.getElementById('toolRect').addEventListener('click', () => setTool('rect'));
+            document.getElementById('toolCircle').addEventListener('click', () => setTool('circle'));
+            setTool('pencil');
+
+            // Color
+            document.getElementById('colorPicker').addEventListener('input', (e) => {
+                currentColor = e.target.value;
+                document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+            });
+
+            // Tamaño
+            const sizeSlider = document.getElementById('sizeSlider');
+            const sizeDisplay = document.getElementById('sizeDisplay');
+            sizeSlider.addEventListener('input', (e) => {
+                currentSize = parseInt(e.target.value);
+                sizeDisplay.textContent = currentSize;
+            });
+
+            // Undo
+            document.getElementById('undoBtn').addEventListener('click', () => {
+                if (undoStack.length > 0) restoreState();
+            });
+
+            // Clear
+            document.getElementById('clearBtn').addEventListener('click', () => {
+                if (confirm('¿Borrar todo el dibujo?')) {
+                    clearCanvas();
                 }
-                renderizar();
-                actualizarCalculoTotal();
-            }
+            });
 
-            // ------ calculadora: sumar/restar (modifica total) ------
-            function actualizarCalculoTotal() {
-                const total = suscripcionesActivas.reduce((acc, id) => {
-                    const plat = PLATAFORMAS.find(p => p.id === id);
-                    return acc + (plat ? plat.precio : 0);
-                }, 0);
-                totalCalc = total;
-                totalSpan.textContent = totalCalc.toFixed(2) + ' €';
-            }
+            // Descargar
+            document.getElementById('downloadPngBtn').addEventListener('click', downloadPNG);
 
-            function operar(signo) {
-                let val = parseFloat(inputSuma.value);
-                if (isNaN(val)) val = 0;
-                if (signo === 'suma') totalCalc += val;
-                else if (signo === 'resta') totalCalc -= val;
-                if (totalCalc < 0) totalCalc = 0;
-                totalSpan.textContent = totalCalc.toFixed(2) + ' €';
-                inputSuma.value = '';
-                // no modificamos las suscripciones, solo la calculadora
-            }
-
-            // ------ generar preview para PNG/PDF (con logos) ------
-            function generarPreview() {
-                const preview = document.getElementById('captura-preview');
-                preview.innerHTML = '';
-                const activas = suscripcionesActivas.map(id => PLATAFORMAS.find(p => p.id === id)).filter(Boolean);
-                if (activas.length === 0) {
-                    const msg = document.createElement('p');
-                    msg.textContent = 'No hay suscripciones activas';
-                    preview.appendChild(msg);
-                } else {
-                    activas.forEach(p => {
-                        const div = document.createElement('div');
-                        div.className = 'item-preview';
-                        const img = document.createElement('img');
-                        img.src = p.logo;
-                        img.alt = p.nombre;
-                        div.appendChild(img);
-                        const nom = document.createElement('div');
-                        nom.className = 'nombre-preview';
-                        nom.textContent = p.nombre;
-                        div.appendChild(nom);
-                        const prec = document.createElement('div');
-                        prec.className = 'precio-preview';
-                        prec.textContent = `${p.precio.toFixed(2)} €`;
-                        div.appendChild(prec);
-                        preview.appendChild(div);
-                    });
-                    // total
-                    const total = activas.reduce((acc, p) => acc + p.precio, 0);
-                    const totalDiv = document.createElement('div');
-                    totalDiv.style.width = '100%';
-                    totalDiv.style.textAlign = 'center';
-                    totalDiv.style.marginTop = '1rem';
-                    totalDiv.style.fontWeight = '700';
-                    totalDiv.textContent = `Total: ${total.toFixed(2)} €`;
-                    preview.appendChild(totalDiv);
-                }
-                return preview;
-            }
-
-            // ------ descargar PNG ------
-            function descargarPNG() {
-                const preview = generarPreview();
-                preview.style.position = 'fixed';
-                preview.style.top = '0';
-                preview.style.left = '0';
-                preview.style.width = '800px';
-                preview.style.background = 'white';
-                preview.style.padding = '2rem';
-                preview.style.zIndex = '9999';
-                preview.style.display = 'flex';
-                preview.style.flexWrap = 'wrap';
-                preview.style.justifyContent = 'center';
-                preview.style.alignItems = 'center';
-                preview.style.gap = '1.5rem';
-                preview.style.borderRadius = '0';
-                document.body.appendChild(preview);
-
-                html2canvas(preview, { scale: 2, backgroundColor: '#ffffff' }).then(canvas => {
-                    const link = document.createElement('a');
-                    link.download = 'suscripciones.png';
-                    link.href = canvas.toDataURL('image/png');
-                    link.click();
-                    document.body.removeChild(preview);
-                }).catch(() => {
-                    document.body.removeChild(preview);
-                });
-            }
-
-            // ------ descargar PDF ------
-            function descargarPDF() {
-                const preview = generarPreview();
-                preview.style.position = 'fixed';
-                preview.style.top = '0';
-                preview.style.left = '0';
-                preview.style.width = '800px';
-                preview.style.background = 'white';
-                preview.style.padding = '2rem';
-                preview.style.zIndex = '9999';
-                preview.style.display = 'flex';
-                preview.style.flexWrap = 'wrap';
-                preview.style.justifyContent = 'center';
-                preview.style.alignItems = 'center';
-                preview.style.gap = '1.5rem';
-                preview.style.borderRadius = '0';
-                document.body.appendChild(preview);
-
-                html2canvas(preview, { scale: 2, backgroundColor: '#ffffff' }).then(canvas => {
-                    const imgData = canvas.toDataURL('image/png');
-                    const { jsPDF } = window.jspdf;
-                    const pdf = new jsPDF('p', 'mm', 'a4');
-                    const pdfWidth = pdf.internal.pageSize.getWidth();
-                    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-                    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-                    pdf.save('suscripciones.pdf');
-                    document.body.removeChild(preview);
-                }).catch(() => {
-                    document.body.removeChild(preview);
-                });
-            }
-
-            // ------ reset ------
-            function resetTodo() {
-                suscripcionesActivas = [];
-                totalCalc = 0;
-                totalSpan.textContent = '0.00 €';
-                inputSuma.value = '';
-                localStorage.setItem('suscripciones_activas', JSON.stringify(suscripcionesActivas));
-                renderizar();
-            }
-
-            // ------ Three.js decorativo (esfera y anillos) ------
-            function initThree() {
-                const container = document.getElementById('three-canvas');
-                const scene = new THREE.Scene();
-                const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 1000);
-                camera.position.set(0, 0, 4);
-
-                const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-                renderer.setSize(140, 140);
-                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-                container.appendChild(renderer.domElement);
-
-                const geometry = new THREE.IcosahedronGeometry(1, 0);
-                const material = new THREE.MeshStandardMaterial({
-                    color: 0x2563eb,
-                    wireframe: false,
-                    roughness: 0.3,
-                    metalness: 0.1,
-                    transparent: true,
-                    opacity: 0.6
-                });
-                const sphere = new THREE.Mesh(geometry, material);
-                scene.add(sphere);
-
-                const wireframe = new THREE.Mesh(
-                    new THREE.IcosahedronGeometry(1.05, 1),
-                    new THREE.MeshBasicMaterial({ wireframe: true, color: 0x94a3b8, transparent: true, opacity: 0.2 })
-                );
-                scene.add(wireframe);
-
-                const ambient = new THREE.AmbientLight(0xffffff, 0.8);
-                scene.add(ambient);
-                const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
-                dirLight.position.set(1, 2, 3);
-                scene.add(dirLight);
-
-                let time = 0;
-                function animate() {
-                    requestAnimationFrame(animate);
-                    time += 0.005;
-                    sphere.rotation.x = time * 0.3;
-                    sphere.rotation.y = time * 0.5;
-                    wireframe.rotation.x = time * 0.3;
-                    wireframe.rotation.y = time * 0.5;
-                    renderer.render(scene, camera);
-                }
-                animate();
-
-                // responsive
-                window.addEventListener('resize', () => {
-                    const w = Math.min(140, window.innerWidth * 0.2);
-                    renderer.setSize(w, w);
-                });
-            }
-
-            // ------ Event listeners ------
-            document.getElementById('toggleTheme').addEventListener('click', () => {
+            // Toggle dark mode
+            document.getElementById('toggleThemeBtn').addEventListener('click', () => {
                 document.body.classList.toggle('dark');
             });
 
-            document.getElementById('btnSumar').addEventListener('click', () => operar('suma'));
-            document.getElementById('btnRestar').addEventListener('click', () => operar('resta'));
-            document.getElementById('btnResetCalc').addEventListener('click', () => {
-                totalCalc = 0;
-                totalSpan.textContent = '0.00 €';
-                inputSuma.value = '';
-            });
+            // Paleta
+            generarPaleta();
 
-            document.getElementById('btnPng').addEventListener('click', descargarPNG);
-            document.getElementById('btnPdf').addEventListener('click', descargarPDF);
-            document.getElementById('resetAll').addEventListener('click', resetTodo);
+            // Ajustar tamaño del canvas al contenedor
+            function resizeCanvas() {
+                const wrapper = canvas.parentElement;
+                const w = wrapper.clientWidth;
+                const h = w * (9 / 16);
+                canvas.style.width = w + 'px';
+                canvas.style.height = h + 'px';
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+        }
 
-            // Inicializar
-            renderizar();
-            initThree();
-            actualizarCalculoTotal();
-
-            // Enter en input suma
-            document.getElementById('inputSuma').addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') operar('suma');
-            });
-
-        })();
-    </script>
+        init();
+    })();
+</script>
 </body>
 </html>

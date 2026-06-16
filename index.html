@@ -2,529 +2,762 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🎨 PowerPoint de Dibujo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bloc de Notas · Minimalista</title>
     <style>
+        /* ===== RESET Y ESTILOS BASE ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, sans-serif;
         }
 
         body {
-            background: #e8ecf1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 1rem;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #ffffff;
+            color: #1a1a1a;
             min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 2rem 1rem;
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
-        .app-container {
-            max-width: 1100px;
+        body.dark {
+            background: #0a0a0a;
+            color: #e8e8e8;
+        }
+
+        .container {
+            max-width: 900px;
             width: 100%;
-            background: white;
-            border-radius: 32px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.08);
-            padding: 1.5rem;
-            transition: all 0.2s;
         }
 
-        /* toolbar superior */
+        /* ===== HEADER ===== */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #e5e5e5;
+            transition: border-color 0.3s ease;
+        }
+
+        body.dark .header {
+            border-bottom-color: #2a2a2a;
+        }
+
+        .header-left h1 {
+            font-size: 1.8rem;
+            font-weight: 300;
+            letter-spacing: -0.5px;
+            margin-bottom: 0.3rem;
+        }
+
+        .header-left .subtitle {
+            font-size: 0.8rem;
+            opacity: 0.5;
+            font-weight: 300;
+            letter-spacing: 0.3px;
+        }
+
+        .header-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        /* ===== BOTONES ===== */
+        .btn {
+            background: transparent;
+            border: 1px solid #d0d0d0;
+            color: #1a1a1a;
+            padding: 0.45rem 1rem;
+            font-size: 0.75rem;
+            font-weight: 400;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            border-radius: 2px;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            background: #1a1a1a;
+            color: #ffffff;
+            border-color: #1a1a1a;
+        }
+
+        body.dark .btn {
+            border-color: #3a3a3a;
+            color: #e8e8e8;
+        }
+
+        body.dark .btn:hover {
+            background: #e8e8e8;
+            color: #0a0a0a;
+            border-color: #e8e8e8;
+        }
+
+        .btn-primary {
+            background: #1a1a1a;
+            color: #ffffff;
+            border-color: #1a1a1a;
+        }
+
+        .btn-primary:hover {
+            background: #333333;
+            border-color: #333333;
+        }
+
+        body.dark .btn-primary {
+            background: #e8e8e8;
+            color: #0a0a0a;
+            border-color: #e8e8e8;
+        }
+
+        body.dark .btn-primary:hover {
+            background: #ffffff;
+            border-color: #ffffff;
+        }
+
+        .btn-sm {
+            padding: 0.3rem 0.7rem;
+            font-size: 0.7rem;
+        }
+
+        /* ===== TOOLBAR SUPERIOR ===== */
         .toolbar {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.6rem 1rem;
-            align-items: center;
-            justify-content: center;
+            gap: 0.5rem;
             margin-bottom: 1.5rem;
-            padding: 0.6rem 1rem;
-            background: #f8fafc;
-            border-radius: 60px;
-            border: 1px solid #e2e8f0;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid #f0f0f0;
+            transition: border-color 0.3s ease;
         }
 
-        .tool-group {
+        body.dark .toolbar {
+            border-bottom-color: #1a1a1a;
+        }
+
+        .toolbar-group {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.4rem;
+            gap: 0.3rem;
             align-items: center;
-            background: white;
-            padding: 0.2rem 0.6rem;
-            border-radius: 40px;
-            border: 1px solid #eef2f6;
+            padding-right: 0.8rem;
+            border-right: 1px solid #eee;
         }
 
-        .tool-group label {
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: #475569;
+        body.dark .toolbar-group {
+            border-right-color: #1a1a1a;
+        }
+
+        .toolbar-group:last-child {
+            border-right: none;
+            padding-right: 0;
+        }
+
+        .toolbar-label {
+            font-size: 0.6rem;
+            opacity: 0.4;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
             margin-right: 0.2rem;
         }
 
-        .btn {
-            padding: 0.4rem 1rem;
-            border-radius: 40px;
-            border: none;
-            background: #f1f4f9;
-            color: #1e293b;
-            font-weight: 600;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.15s;
-            display: inline-flex;
-            align-items: center;
+        /* ===== ÁREA DE TEXTO ===== */
+        .editor-wrapper {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        #nota {
+            width: 100%;
+            min-height: 500px;
+            padding: 1.5rem;
+            font-size: 1rem;
+            line-height: 1.8;
+            font-family: inherit;
+            color: inherit;
+            background: transparent;
+            border: 1px solid #e8e8e8;
+            border-radius: 2px;
+            resize: vertical;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        body.dark #nota {
+            border-color: #2a2a2a;
+        }
+
+        #nota:focus {
+            border-color: #1a1a1a;
+        }
+
+        body.dark #nota:focus {
+            border-color: #555;
+        }
+
+        /* ===== ESTADÍSTICAS ===== */
+        .stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem 2rem;
+            padding: 1rem 0;
+            font-size: 0.75rem;
+            opacity: 0.5;
+            font-weight: 300;
+            letter-spacing: 0.2px;
+            border-top: 1px solid #f0f0f0;
+            transition: border-color 0.3s ease;
+        }
+
+        body.dark .stats {
+            border-top-color: #1a1a1a;
+        }
+
+        .stats-item {
+            display: flex;
             gap: 0.3rem;
         }
-        .btn:hover {
-            background: #e2e8f0;
-            transform: scale(0.96);
-        }
-        .btn-primary {
-            background: #2563eb;
-            color: white;
-        }
-        .btn-primary:hover {
-            background: #1d4ed8;
-        }
-        .btn-success {
-            background: #16a34a;
-            color: white;
-        }
-        .btn-success:hover {
-            background: #15803d;
-        }
-        .btn-danger {
-            background: #dc2626;
-            color: white;
-        }
-        .btn-danger:hover {
-            background: #b91c1c;
-        }
-        .btn-outline {
-            background: transparent;
-            border: 2px solid #cbd5e1;
-        }
-        .btn-outline:hover {
-            background: #f1f5f9;
+
+        .stats-item span:first-child {
+            opacity: 0.5;
         }
 
-        input[type="color"] {
-            width: 36px;
-            height: 36px;
-            border: 2px solid #e2e8f0;
-            border-radius: 50%;
-            padding: 2px;
-            cursor: pointer;
-            background: white;
-        }
-        input[type="range"] {
-            width: 80px;
-            cursor: pointer;
-        }
-        .size-indicator {
-            font-weight: 600;
-            font-size: 0.8rem;
-            min-width: 30px;
-            text-align: center;
-        }
-
-        /* lienzo */
-        .canvas-wrapper {
-            position: relative;
-            background: white;
-            border-radius: 24px;
-            border: 2px solid #e2e8f0;
-            overflow: hidden;
-            box-shadow: inset 0 4px 12px rgba(0,0,0,0.02);
-            touch-action: none;
-        }
-
-        #canvasDibujo {
-            display: block;
-            width: 100%;
-            height: auto;
-            aspect-ratio: 16 / 9;
-            background: white;
-            cursor: crosshair;
-            touch-action: none;
-        }
-
-        /* barra inferior */
-        .status-bar {
+        /* ===== NOTAS MÚLTIPLES ===== */
+        .notes-list {
             display: flex;
             flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 1rem;
-            gap: 0.8rem;
-        }
-
-        .color-palette {
-            display: flex;
-            gap: 0.4rem;
-            flex-wrap: wrap;
-        }
-        .color-swatch {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            border: 2px solid transparent;
-            cursor: pointer;
-            transition: 0.1s;
-        }
-        .color-swatch:hover {
-            transform: scale(1.15);
-        }
-        .color-swatch.active {
-            border-color: #1e293b;
-            box-shadow: 0 0 0 2px white, 0 0 0 4px #1e293b;
-        }
-
-        .action-buttons {
-            display: flex;
             gap: 0.5rem;
-            flex-wrap: wrap;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #f0f0f0;
         }
 
-        /* Responsive */
+        body.dark .notes-list {
+            border-bottom-color: #1a1a1a;
+        }
+
+        .note-tab {
+            padding: 0.3rem 1rem;
+            font-size: 0.75rem;
+            background: transparent;
+            border: 1px solid #e0e0e0;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: inherit;
+            font-family: inherit;
+        }
+
+        body.dark .note-tab {
+            border-color: #2a2a2a;
+        }
+
+        .note-tab.active {
+            background: #1a1a1a;
+            color: #ffffff;
+            border-color: #1a1a1a;
+        }
+
+        body.dark .note-tab.active {
+            background: #e8e8e8;
+            color: #0a0a0a;
+            border-color: #e8e8e8;
+        }
+
+        .note-tab:hover:not(.active) {
+            background: #f5f5f5;
+        }
+
+        body.dark .note-tab:hover:not(.active) {
+            background: #1a1a1a;
+        }
+
+        /* ===== RESPONSIVE ===== */
         @media (max-width: 700px) {
-            .app-container { padding: 1rem; }
-            .toolbar { border-radius: 24px; padding: 0.8rem; }
-            .tool-group { padding: 0.2rem 0.4rem; }
-            .btn { font-size: 0.75rem; padding: 0.3rem 0.7rem; }
+            body { padding: 1rem; }
+            .header { flex-direction: column; align-items: stretch; }
+            .header-actions { flex-wrap: wrap; }
+            .toolbar { flex-direction: column; align-items: stretch; }
+            .toolbar-group { border-right: none; padding-right: 0; border-bottom: 1px solid #eee; padding-bottom: 0.5rem; }
+            body.dark .toolbar-group { border-bottom-color: #1a1a1a; }
+            .toolbar-group:last-child { border-bottom: none; }
+            #nota { min-height: 300px; padding: 1rem; }
+            .stats { gap: 0.8rem; }
         }
 
-        /* modo oscuro opcional (estilo PowerPoint oscuro) */
-        body.dark .app-container { background: #1e293b; }
-        body.dark .toolbar { background: #0f172a; border-color: #334155; }
-        body.dark .tool-group { background: #1e293b; border-color: #334155; }
-        body.dark .tool-group label { color: #94a3b8; }
-        body.dark .btn { background: #334155; color: #e2e8f0; }
-        body.dark .btn:hover { background: #475569; }
-        body.dark .btn-outline { border-color: #475569; }
-        body.dark .canvas-wrapper { border-color: #334155; }
-        body.dark .color-swatch.active { border-color: #e2e8f0; box-shadow: 0 0 0 2px #1e293b, 0 0 0 4px #e2e8f0; }
-        body.dark .status-bar { color: #cbd5e1; }
+        /* ===== SCROLLBAR PERSONALIZADA ===== */
+        #nota::-webkit-scrollbar {
+            width: 4px;
+        }
+        #nota::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        #nota::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 2px;
+        }
+        body.dark #nota::-webkit-scrollbar-thumb {
+            background: #333;
+        }
     </style>
 </head>
 <body>
+    <div class="container">
+        <!-- HEADER -->
+        <header class="header">
+            <div class="header-left">
+                <h1>Bloc de notas</h1>
+                <div class="subtitle" id="lastEdited">—</div>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-sm" id="themeToggle">Light Mode</button>
+                <button class="btn btn-sm btn-primary" id="exportTxt">Exportar .txt</button>
+                <button class="btn btn-sm" id="exportMd">Exportar .md</button>
+                <button class="btn btn-sm" id="exportJson">Exportar .json</button>
+                <button class="btn btn-sm" id="importJson">Importar .json</button>
+            </div>
+        </header>
 
-<div class="app-container">
-    <!-- Toolbar -->
-    <div class="toolbar" id="toolbar">
-        <div class="tool-group">
-            <label>🖊️ Herramienta</label>
-            <button class="btn btn-primary" id="toolPencil" title="Lápiz">✏️ Lápiz</button>
-            <button class="btn btn-outline" id="toolEraser" title="Borrador">🧹 Borrar</button>
-            <button class="btn btn-outline" id="toolLine" title="Línea recta">📏 Línea</button>
-            <button class="btn btn-outline" id="toolRect" title="Rectángulo">▭ Rect</button>
-            <button class="btn btn-outline" id="toolCircle" title="Círculo">⭕ Círculo</button>
+        <!-- NOTAS MÚLTIPLES -->
+        <div class="notes-list" id="notesList">
+            <button class="note-tab active" data-note="0">Nota 1</button>
+            <button class="note-tab" data-note="1">Nota 2</button>
+            <button class="note-tab" data-note="2">Nota 3</button>
+            <button class="btn btn-sm" id="addNote" style="border:1px dashed #ccc;">+ Nueva</button>
+            <button class="btn btn-sm" id="deleteNote" style="border-color:#ff6b6b;color:#ff6b6b;">Eliminar</button>
         </div>
 
-        <div class="tool-group">
-            <label>🎨 Color</label>
-            <input type="color" id="colorPicker" value="#2563eb">
+        <!-- TOOLBAR -->
+        <div class="toolbar">
+            <div class="toolbar-group">
+                <span class="toolbar-label">Estilo</span>
+                <button class="btn btn-sm" id="boldBtn">Negrita</button>
+                <button class="btn btn-sm" id="italicBtn">Cursiva</button>
+                <button class="btn btn-sm" id="underlineBtn">Subrayado</button>
+            </div>
+            <div class="toolbar-group">
+                <span class="toolbar-label">Alinear</span>
+                <button class="btn btn-sm" id="alignLeft">Izq</button>
+                <button class="btn btn-sm" id="alignCenter">Cent</button>
+                <button class="btn btn-sm" id="alignRight">Der</button>
+            </div>
+            <div class="toolbar-group">
+                <span class="toolbar-label">Tamaño</span>
+                <button class="btn btn-sm" id="fontSmall">Peq</button>
+                <button class="btn btn-sm" id="fontMedium">Med</button>
+                <button class="btn btn-sm" id="fontLarge">Gra</button>
+            </div>
+            <div class="toolbar-group">
+                <button class="btn btn-sm" id="findReplaceBtn">Buscar / Reemplazar</button>
+                <button class="btn btn-sm" id="clearFormatBtn">Limpiar formato</button>
+            </div>
         </div>
 
-        <div class="tool-group">
-            <label>📏 Tamaño</label>
-            <input type="range" id="sizeSlider" min="1" max="40" value="6">
-            <span class="size-indicator" id="sizeDisplay">6</span>
+        <!-- ÁREA DE BÚSQUEDA (oculta por defecto) -->
+        <div id="findReplace" style="display:none; margin-bottom:1rem; padding:0.8rem; background:#f8f8f8; border-radius:2px; gap:0.5rem; flex-wrap:wrap; align-items:center; display:none;">
+            <input type="text" id="findInput" placeholder="Buscar..." style="padding:0.3rem 0.6rem; border:1px solid #ddd; font-size:0.8rem; flex:1; min-width:120px; background:transparent; color:inherit; font-family:inherit;">
+            <input type="text" id="replaceInput" placeholder="Reemplazar con..." style="padding:0.3rem 0.6rem; border:1px solid #ddd; font-size:0.8rem; flex:1; min-width:120px; background:transparent; color:inherit; font-family:inherit;">
+            <button class="btn btn-sm" id="findBtn">Buscar</button>
+            <button class="btn btn-sm" id="replaceBtn">Reemplazar</button>
+            <button class="btn btn-sm" id="replaceAllBtn">Reemplazar todo</button>
+            <button class="btn btn-sm" id="closeFindBtn">Cerrar</button>
         </div>
 
-        <div class="tool-group">
-            <button class="btn btn-outline" id="undoBtn">↩️ Deshacer</button>
-            <button class="btn btn-danger" id="clearBtn">🗑️ Limpiar</button>
+        <!-- EDITOR -->
+        <div class="editor-wrapper">
+            <textarea id="nota" placeholder="Escribe aquí..."></textarea>
+        </div>
+
+        <!-- ESTADÍSTICAS -->
+        <div class="stats">
+            <div class="stats-item"><span>Palabras</span> <span id="wordCount">0</span></div>
+            <div class="stats-item"><span>Caracteres</span> <span id="charCount">0</span></div>
+            <div class="stats-item"><span>Líneas</span> <span id="lineCount">0</span></div>
+            <div class="stats-item"><span>Párrafos</span> <span id="paragraphCount">0</span></div>
+            <div class="stats-item"><span>Última edición</span> <span id="lastEditTime">—</span></div>
         </div>
     </div>
 
-    <!-- Lienzo -->
-    <div class="canvas-wrapper">
-        <canvas id="canvasDibujo" width="1600" height="900"></canvas>
-    </div>
+    <script>
+        // ============================================================
+        //  BLOC DE NOTAS MINIMALISTA · TODAS LAS FUNCIONES
+        // ============================================================
 
-    <!-- Barra inferior -->
-    <div class="status-bar">
-        <div class="color-palette" id="palette">
-            <!-- colores predefinidos (se generan con JS) -->
-        </div>
-        <div class="action-buttons">
-            <button class="btn btn-outline" id="toggleThemeBtn">🌓 Modo</button>
-            <button class="btn btn-success" id="downloadPngBtn">⬇️ Descargar PNG</button>
-        </div>
-    </div>
-</div>
+        // ----- ELEMENTOS -----
+        const nota = document.getElementById('nota');
+        const themeToggle = document.getElementById('themeToggle');
+        const lastEdited = document.getElementById('lastEdited');
+        const wordCount = document.getElementById('wordCount');
+        const charCount = document.getElementById('charCount');
+        const lineCount = document.getElementById('lineCount');
+        const paragraphCount = document.getElementById('paragraphCount');
+        const lastEditTime = document.getElementById('lastEditTime');
 
-<script>
-    (function() {
-        // ------ Canvas y contexto ------
-        const canvas = document.getElementById('canvasDibujo');
-        const ctx = canvas.getContext('2d');
-        const rect = canvas.getBoundingClientRect();
+        // ----- ESTADO -----
+        let notes = [];
+        let currentNoteIndex = 0;
+        let darkMode = false;
+        let fontSize = 'medium'; // small, medium, large
 
-        // ------ Estado ------
-        let isDrawing = false;
-        let lastX = 0, lastY = 0;
-        let currentTool = 'pencil'; // pencil | eraser | line | rect | circle
-        let currentColor = '#2563eb';
-        let currentSize = 6;
-        let undoStack = [];
-        const MAX_UNDO = 30;
-
-        // Guardar estado inicial (lienzo en blanco)
-        function saveState() {
-            if (undoStack.length >= MAX_UNDO) undoStack.shift();
-            undoStack.push(canvas.toDataURL());
-        }
-
-        function restoreState() {
-            if (undoStack.length === 0) return;
-            const img = new Image();
-            img.onload = () => {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.drawImage(img, 0, 0);
-            };
-            img.src = undoStack.pop();
-        }
-
-        // Limpiar y guardar estado
-        function clearCanvas() {
-            saveState();
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-        }
-
-        // ------ Dibujar funciones ------
-        function startDraw(e) {
-            e.preventDefault();
-            const pos = getMousePos(e);
-            if (!pos) return;
-            isDrawing = true;
-            lastX = pos.x;
-            lastY = pos.y;
-            // Si es lápiz o borrador, comenzamos trazado
-            if (currentTool === 'pencil' || currentTool === 'eraser') {
-                ctx.beginPath();
-                ctx.moveTo(lastX, lastY);
-            }
-            // Guardar estado al comenzar (para formas)
-            if (['line', 'rect', 'circle'].includes(currentTool)) {
-                saveState();
-            }
-        }
-
-        function draw(e) {
-            e.preventDefault();
-            if (!isDrawing) return;
-            const pos = getMousePos(e);
-            if (!pos) return;
-
-            const { x, y } = pos;
-
-            if (currentTool === 'pencil' || currentTool === 'eraser') {
-                ctx.lineWidth = currentSize;
-                ctx.lineCap = 'round';
-                ctx.lineJoin = 'round';
-                ctx.strokeStyle = currentTool === 'eraser' ? '#ffffff' : currentColor;
-                ctx.lineTo(x, y);
-                ctx.stroke();
-                // actualizar para siguiente segmento
-                ctx.beginPath();
-                ctx.moveTo(x, y);
-            } else if (currentTool === 'line') {
-                // dibujar línea temporal (borrar y redibujar)
-                restoreState(); // volver al estado anterior (antes de empezar la línea)
-                ctx.beginPath();
-                ctx.moveTo(lastX, lastY);
-                ctx.lineTo(x, y);
-                ctx.strokeStyle = currentColor;
-                ctx.lineWidth = currentSize;
-                ctx.lineCap = 'round';
-                ctx.stroke();
-            } else if (currentTool === 'rect') {
-                restoreState();
-                const w = x - lastX;
-                const h = y - lastY;
-                ctx.strokeStyle = currentColor;
-                ctx.lineWidth = currentSize;
-                ctx.strokeRect(lastX, lastY, w, h);
-            } else if (currentTool === 'circle') {
-                restoreState();
-                const radius = Math.sqrt((x - lastX) ** 2 + (y - lastY) ** 2);
-                ctx.beginPath();
-                ctx.arc(lastX, lastY, radius, 0, 2 * Math.PI);
-                ctx.strokeStyle = currentColor;
-                ctx.lineWidth = currentSize;
-                ctx.stroke();
-            }
-        }
-
-        function endDraw(e) {
-            if (!isDrawing) return;
-            isDrawing = false;
-            // Para lápiz y borrador guardamos estado al terminar
-            if (currentTool === 'pencil' || currentTool === 'eraser') {
-                saveState();
-            } else {
-                // Para formas, ya guardamos estado al empezar, pero al terminar guardamos otra vez para poder deshacer
-                // pero cuidado: restoreState en draw ya guarda, mejor guardar al final
-                // pero como usamos restoreState() en draw, el estado queda guardado.
-                // Añadimos uno extra para poder deshacer la forma completa
-                // mejor guardar al inicio y al final
-                saveState();
-            }
-            // En caso de formas, guardamos estado final
-            if (['line', 'rect', 'circle'].includes(currentTool)) {
-                // ya se guardó al inicio, pero añadimos uno para poder deshacer la forma completa
-                // pero para evitar duplicados, lo manejamos con cuidado
-                // mejor: en startDraw guardamos, en endDraw guardamos de nuevo
-                saveState();
-            }
-            ctx.beginPath(); // reset
-        }
-
-        function getMousePos(e) {
-            const rect = canvas.getBoundingClientRect();
-            const scaleX = canvas.width / rect.width;
-            const scaleY = canvas.height / rect.height;
-            let clientX, clientY;
-            if (e.touches) {
-                clientX = e.touches[0].clientX;
-                clientY = e.touches[0].clientY;
-                e.preventDefault();
-            } else {
-                clientX = e.clientX;
-                clientY = e.clientY;
-            }
-            const x = (clientX - rect.left) * scaleX;
-            const y = (clientY - rect.top) * scaleY;
-            return { x: Math.min(Math.max(x, 0), canvas.width), y: Math.min(Math.max(y, 0), canvas.height) };
-        }
-
-        // ------ Herramientas UI ------
-        function setTool(tool) {
-            currentTool = tool;
-            document.querySelectorAll('.tool-group .btn').forEach(b => b.classList.remove('btn-primary'));
-            if (tool === 'pencil') document.getElementById('toolPencil').classList.add('btn-primary');
-            else if (tool === 'eraser') document.getElementById('toolEraser').classList.add('btn-primary');
-            else if (tool === 'line') document.getElementById('toolLine').classList.add('btn-primary');
-            else if (tool === 'rect') document.getElementById('toolRect').classList.add('btn-primary');
-            else if (tool === 'circle') document.getElementById('toolCircle').classList.add('btn-primary');
-            canvas.style.cursor = tool === 'eraser' ? 'cell' : 'crosshair';
-        }
-
-        // ------ Paleta de colores ------
-        const coloresPredefinidos = [
-            '#2563eb', '#dc2626', '#16a34a', '#f59e0b', '#8b5cf6',
-            '#ec4899', '#14b8a6', '#f97316', '#64748b', '#000000',
-            '#ffffff', '#e2e8f0'
-        ];
-
-        function generarPaleta() {
-            const palette = document.getElementById('palette');
-            palette.innerHTML = '';
-            coloresPredefinidos.forEach(color => {
-                const swatch = document.createElement('div');
-                swatch.className = 'color-swatch';
-                swatch.style.background = color;
-                if (color === '#ffffff') swatch.style.border = '1px solid #cbd5e1';
-                swatch.dataset.color = color;
-                swatch.addEventListener('click', () => {
-                    document.getElementById('colorPicker').value = color;
-                    currentColor = color;
-                    document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
-                    swatch.classList.add('active');
-                });
-                palette.appendChild(swatch);
-            });
-            // activar el primero
-            const first = palette.querySelector('.color-swatch');
-            if (first) first.classList.add('active');
-        }
-
-        // ------ Descargar PNG ------
-        function downloadPNG() {
-            const link = document.createElement('a');
-            link.download = 'dibujo_powerpoint.png';
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-        }
-
-        // ------ Inicializar ------
-        function init() {
-            // Guardar estado inicial
-            saveState();
-
-            // Eventos ratón y táctiles
-            canvas.addEventListener('mousedown', startDraw);
-            canvas.addEventListener('mousemove', draw);
-            canvas.addEventListener('mouseup', endDraw);
-            canvas.addEventListener('mouseleave', endDraw);
-
-            canvas.addEventListener('touchstart', startDraw, { passive: false });
-            canvas.addEventListener('touchmove', draw, { passive: false });
-            canvas.addEventListener('touchend', endDraw, { passive: false });
-
-            // Herramientas
-            document.getElementById('toolPencil').addEventListener('click', () => setTool('pencil'));
-            document.getElementById('toolEraser').addEventListener('click', () => setTool('eraser'));
-            document.getElementById('toolLine').addEventListener('click', () => setTool('line'));
-            document.getElementById('toolRect').addEventListener('click', () => setTool('rect'));
-            document.getElementById('toolCircle').addEventListener('click', () => setTool('circle'));
-            setTool('pencil');
-
-            // Color
-            document.getElementById('colorPicker').addEventListener('input', (e) => {
-                currentColor = e.target.value;
-                document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
-            });
-
-            // Tamaño
-            const sizeSlider = document.getElementById('sizeSlider');
-            const sizeDisplay = document.getElementById('sizeDisplay');
-            sizeSlider.addEventListener('input', (e) => {
-                currentSize = parseInt(e.target.value);
-                sizeDisplay.textContent = currentSize;
-            });
-
-            // Undo
-            document.getElementById('undoBtn').addEventListener('click', () => {
-                if (undoStack.length > 0) restoreState();
-            });
-
-            // Clear
-            document.getElementById('clearBtn').addEventListener('click', () => {
-                if (confirm('¿Borrar todo el dibujo?')) {
-                    clearCanvas();
+        // ----- INICIALIZAR NOTAS -----
+        function initNotes() {
+            const saved = localStorage.getItem('minimal_notes');
+            if (saved) {
+                try {
+                    notes = JSON.parse(saved);
+                    if (!Array.isArray(notes) || notes.length === 0) {
+                        notes = ['', '', ''];
+                    }
+                } catch {
+                    notes = ['', '', ''];
                 }
-            });
-
-            // Descargar
-            document.getElementById('downloadPngBtn').addEventListener('click', downloadPNG);
-
-            // Toggle dark mode
-            document.getElementById('toggleThemeBtn').addEventListener('click', () => {
-                document.body.classList.toggle('dark');
-            });
-
-            // Paleta
-            generarPaleta();
-
-            // Ajustar tamaño del canvas al contenedor
-            function resizeCanvas() {
-                const wrapper = canvas.parentElement;
-                const w = wrapper.clientWidth;
-                const h = w * (9 / 16);
-                canvas.style.width = w + 'px';
-                canvas.style.height = h + 'px';
+            } else {
+                notes = ['', '', ''];
             }
-            window.addEventListener('resize', resizeCanvas);
-            resizeCanvas();
+            // Asegurar que haya al menos 3 notas
+            while (notes.length < 3) notes.push('');
+            currentNoteIndex = 0;
+            renderTabs();
+            loadNote();
+            updateStats();
+            updateLastEdited();
         }
 
-        init();
-    })();
-</script>
+        // ----- GUARDAR NOTAS -----
+        function saveNotes() {
+            localStorage.setItem('minimal_notes', JSON.stringify(notes));
+            localStorage.setItem('minimal_notes_current', currentNoteIndex);
+            localStorage.setItem('minimal_notes_dark', darkMode ? 'dark' : 'light');
+            localStorage.setItem('minimal_notes_fontsize', fontSize);
+        }
+
+        // ----- CARGAR NOTA ACTUAL -----
+        function loadNote() {
+            if (notes[currentNoteIndex] !== undefined) {
+                nota.value = notes[currentNoteIndex];
+                applyFontSize();
+                updateStats();
+                updateLastEdited();
+            }
+        }
+
+        // ----- GUARDAR NOTA ACTUAL -----
+        function saveCurrentNote() {
+            notes[currentNoteIndex] = nota.value;
+            saveNotes();
+            updateStats();
+            updateLastEdited();
+            updateLastEditTime();
+        }
+
+        // ----- RENDERIZAR PESTAÑAS -----
+        function renderTabs() {
+            const list = document.getElementById('notesList');
+            // eliminar tabs viejas (excepto botones)
+            const tabs = list.querySelectorAll('.note-tab');
+            tabs.forEach(t => t.remove());
+
+            notes.forEach((_, i) => {
+                const tab = document.createElement('button');
+                tab.className = `note-tab ${i === currentNoteIndex ? 'active' : ''}`;
+                tab.dataset.note = i;
+                tab.textContent = `Nota ${i + 1}`;
+                tab.addEventListener('click', () => {
+                    saveCurrentNote();
+                    currentNoteIndex = i;
+                    loadNote();
+                    renderTabs();
+                    saveNotes();
+                });
+                list.insertBefore(tab, list.querySelector('#addNote'));
+            });
+        }
+
+        // ----- ACTUALIZAR ESTADÍSTICAS -----
+        function updateStats() {
+            const text = nota.value;
+            const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+            const chars = text.length;
+            const lines = text ? text.split('\n').length : 0;
+            const paragraphs = text ? text.split('\n\n').filter(p => p.trim()).length : 0;
+
+            wordCount.textContent = words;
+            charCount.textContent = chars;
+            lineCount.textContent = lines;
+            paragraphCount.textContent = paragraphs;
+        }
+
+        // ----- ACTUALIZAR FECHA EDICIÓN -----
+        function updateLastEdited() {
+            const now = new Date();
+            const options = { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' };
+            lastEdited.textContent = `Última edición: ${now.toLocaleDateString('es-ES', options)}`;
+        }
+
+        function updateLastEditTime() {
+            const now = new Date();
+            const options = { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' };
+            lastEditTime.textContent = now.toLocaleDateString('es-ES', options);
+        }
+
+        // ----- APLICAR TAMAÑO DE FUENTE -----
+        function applyFontSize() {
+            const sizes = { small: '0.85rem', medium: '1rem', large: '1.3rem' };
+            nota.style.fontSize = sizes[fontSize] || '1rem';
+        }
+
+        // ----- ALTERNAR TEMA -----
+        function toggleTheme() {
+            darkMode = !darkMode;
+            document.body.classList.toggle('dark', darkMode);
+            themeToggle.textContent = darkMode ? 'Dark Mode' : 'Light Mode';
+            saveNotes();
+        }
+
+        // ----- FORMATO DE TEXTO -----
+        function wrapText(tag) {
+            const start = nota.selectionStart;
+            const end = nota.selectionEnd;
+            const selected = nota.value.substring(start, end);
+            if (!selected) return;
+            const before = nota.value.substring(0, start);
+            const after = nota.value.substring(end);
+            nota.value = before + tag + selected + tag + after;
+            nota.selectionStart = start + tag.length;
+            nota.selectionEnd = end + tag.length;
+            saveCurrentNote();
+        }
+
+        function applyAlignment(align) {
+            nota.style.textAlign = align;
+        }
+
+        // ----- BUSCAR Y REEMPLAZAR -----
+        function findAndReplace(find, replace, all = false) {
+            if (!find) return;
+            const text = nota.value;
+            if (all) {
+                const regex = new RegExp(find.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+                nota.value = text.replace(regex, replace);
+            } else {
+                const start = nota.selectionStart;
+                const end = nota.selectionEnd;
+                const selected = text.substring(start, end);
+                if (selected === find) {
+                    const before = text.substring(0, start);
+                    const after = text.substring(end);
+                    nota.value = before + replace + after;
+                    nota.selectionStart = start;
+                    nota.selectionEnd = start + replace.length;
+                } else {
+                    const index = text.indexOf(find, start);
+                    if (index !== -1) {
+                        nota.selectionStart = index;
+                        nota.selectionEnd = index + find.length;
+                    }
+                }
+            }
+            saveCurrentNote();
+        }
+
+        // ----- LIMPIAR FORMATO -----
+        function clearFormat() {
+            nota.style.textAlign = 'left';
+            nota.style.fontSize = '1rem';
+            nota.style.fontWeight = 'normal';
+            nota.style.fontStyle = 'normal';
+            nota.style.textDecoration = 'none';
+            fontSize = 'medium';
+            applyFontSize();
+            saveNotes();
+        }
+
+        // ----- EXPORTAR -----
+        function exportTxt() {
+            const blob = new Blob([nota.value], { type: 'text/plain' });
+            downloadBlob(blob, `nota_${currentNoteIndex + 1}.txt`);
+        }
+
+        function exportMd() {
+            const blob = new Blob([nota.value], { type: 'text/markdown' });
+            downloadBlob(blob, `nota_${currentNoteIndex + 1}.md`);
+        }
+
+        function exportJson() {
+            const json = JSON.stringify({ notes, current: currentNoteIndex, dark: darkMode, fontSize }, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            downloadBlob(blob, 'notas_backup.json');
+        }
+
+        function downloadBlob(blob, filename) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // ----- IMPORTAR JSON -----
+        function importJson() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    try {
+                        const data = JSON.parse(ev.target.result);
+                        if (data.notes && Array.isArray(data.notes)) {
+                            notes = data.notes;
+                            if (data.current !== undefined) currentNoteIndex = data.current;
+                            if (data.dark !== undefined) {
+                                darkMode = data.dark;
+                                document.body.classList.toggle('dark', darkMode);
+                                themeToggle.textContent = darkMode ? 'Dark Mode' : 'Light Mode';
+                            }
+                            if (data.fontSize) {
+                                fontSize = data.fontSize;
+                                applyFontSize();
+                            }
+                            renderTabs();
+                            loadNote();
+                            saveNotes();
+                        }
+                    } catch (err) {
+                        alert('Error al importar el archivo JSON');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+
+        // ============================================================
+        //  EVENTOS
+        // ============================================================
+
+        // ---- Guardado automático ----
+        nota.addEventListener('input', () => {
+            saveCurrentNote();
+        });
+
+        // ---- Tema ----
+        themeToggle.addEventListener('click', toggleTheme);
+
+        // ---- Notas múltiples ----
+        document.getElementById('addNote').addEventListener('click', () => {
+            saveCurrentNote();
+            notes.push('');
+            currentNoteIndex = notes.length - 1;
+            renderTabs();
+            loadNote();
+            saveNotes();
+        });
+
+        document.getElementById('deleteNote').addEventListener('click', () => {
+            if (notes.length <= 1) {
+                alert('No puedes eliminar la última nota.');
+                return;
+            }
+            if (confirm(`¿Eliminar "Nota ${currentNoteIndex + 1}"?`)) {
+                notes.splice(currentNoteIndex, 1);
+                if (currentNoteIndex >= notes.length) currentNoteIndex = notes.length - 1;
+                renderTabs();
+                loadNote();
+                saveNotes();
+            }
+        });
+
+        // ---- Formato ----
+        document.getElementById('boldBtn').addEventListener('click', () => wrapText('**'));
+        document.getElementById('italicBtn').addEventListener('click', () => wrapText('*'));
+        document.getElementById('underlineBtn').addEventListener('click', () => wrapText('__'));
+
+        document.getElementById('alignLeft').addEventListener('click', () => applyAlignment('left'));
+        document.getElementById('alignCenter').addEventListener('click', () => applyAlignment('center'));
+        document.getElementById('alignRight').addEventListener('click', () => applyAlignment('right'));
+
+        document.getElementById('fontSmall').addEventListener('click', () => { fontSize = 'small'; applyFontSize(); saveNotes(); });
+        document.getElementById('fontMedium').addEventListener('click', () => { fontSize = 'medium'; applyFontSize(); saveNotes(); });
+        document.getElementById('fontLarge').addEventListener('click', () => { fontSize = 'large'; applyFontSize(); saveNotes(); });
+
+        document.getElementById('clearFormatBtn').addEventListener('click', clearFormat);
+
+        // ---- Buscar / Reemplazar ----
+        const findReplaceDiv = document.getElementById('findReplace');
+        document.getElementById('findReplaceBtn').addEventListener('click', () => {
+            findReplaceDiv.style.display = findReplaceDiv.style.display === 'none' ? 'flex' : 'none';
+        });
+
+        document.getElementById('closeFindBtn').addEventListener('click', () => {
+            findReplaceDiv.style.display = 'none';
+        });
+
+        document.getElementById('findBtn').addEventListener('click', () => {
+            const find = document.getElementById('findInput').value;
+            findAndReplace(find, '');
+        });
+
+        document.getElementById('replaceBtn').addEventListener('click', () => {
+            const find = document.getElementById('findInput').value;
+            const replace = document.getElementById('replaceInput').value;
+            findAndReplace(find, replace);
+        });
+
+        document.getElementById('replaceAllBtn').addEventListener('click', () => {
+            const find = document.getElementById('findInput').value;
+            const replace = document.getElementById('replaceInput').value;
+            findAndReplace(find, replace, true);
+        });
+
+        // ---- Exportar / Importar ----
+        document.getElementById('exportTxt').addEventListener('click', exportTxt);
+        document.getElementById('exportMd').addEventListener('click', exportMd);
+        document.getElementById('exportJson').addEventListener('click', exportJson);
+        document.getElementById('importJson').addEventListener('click', importJson);
+
+        // ============================================================
+        //  INICIALIZAR
+        // ============================================================
+
+        // Cargar preferencias guardadas
+        const savedDark = localStorage.getItem('minimal_notes_dark');
+        if (savedDark === 'dark') {
+            darkMode = true;
+            document.body.classList.add('dark');
+            themeToggle.textContent = 'Dark Mode';
+        }
+
+        const savedFont = localStorage.getItem('minimal_notes_fontsize');
+        if (savedFont) {
+            fontSize = savedFont;
+        }
+
+        initNotes();
+        applyFontSize();
+        updateLastEditTime();
+
+        // Actualizar hora cada 30 segundos
+        setInterval(updateLastEditTime, 30000);
+
+        console.log('📝 Bloc de notas minimalista cargado con éxito');
+        console.log(`📊 ${notes.length} notas disponibles`);
+    </script>
 </body>
 </html>

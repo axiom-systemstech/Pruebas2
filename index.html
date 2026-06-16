@@ -141,7 +141,6 @@
             flex-wrap: wrap;
             box-shadow: 0 4px 12px rgba(0,0,0,0.03);
             border: 1px solid #e9edf2;
-            margin-bottom: 1.5rem;
         }
         body.dark .calc-box {
             background: #1e293b;
@@ -175,7 +174,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             gap: 1.2rem;
-            margin: 1.5rem 0;
+            margin: 2rem 0;
         }
 
         .card {
@@ -190,7 +189,6 @@
             text-align: center;
             transition: all 0.2s;
             cursor: pointer;
-            user-select: none;
         }
         .card:hover {
             transform: translateY(-4px);
@@ -294,7 +292,7 @@
             width: 48px;
             height: 48px;
             object-fit: contain;
-            filter: grayscale(0%);
+            filter: grayscale(100%);
         }
         #captura-preview .nombre-preview {
             font-weight: 700;
@@ -321,34 +319,12 @@
             height: 140px;
             border-radius: 50%;
             pointer-events: none;
-            opacity: 0.4;
-            z-index: 10;
+            opacity: 0.25;
+            z-index: 0;
             border: 1px solid rgba(255,255,255,0.1);
         }
         body.dark #three-canvas {
-            opacity: 0.6;
-        }
-
-        /* Toast mensaje para evitar alert() */
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: #1e293b;
-            color: #fff;
-            padding: 0.8rem 1.5rem;
-            border-radius: 30px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            z-index: 1000;
-            opacity: 0;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
-        }
-        .toast.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
+            opacity: 0.3;
         }
     </style>
 </head>
@@ -377,7 +353,7 @@
         <!-- Grid de plataformas -->
         <div id="gridSuscripciones" class="grid"></div>
 
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
             <p id="suscripciones-activas">🟢 0 suscripciones activas</p>
             <span class="badge" id="contadorTotal">20 plataformas</span>
         </div>
@@ -392,9 +368,6 @@
 
     <!-- three.js 3D decorativo -->
     <div id="three-canvas"></div>
-
-    <!-- Toast de notificaciones -->
-    <div id="toast" class="toast">Mensaje aquí</div>
 
     <script>
         (function() {
@@ -422,14 +395,8 @@
                 { id: 'tidal', nombre: 'Tidal HiFi', plan: 'Mensual', precio: 19.99, logo: 'https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/tidal.svg' }
             ];
 
-            // Estado: guardamos activas en localStorage de forma segura
-            let suscripcionesActivas = [];
-            try {
-                suscripcionesActivas = JSON.parse(localStorage.getItem('suscripciones_activas')) || [];
-            } catch (e) {
-                suscripcionesActivas = [];
-            }
-            
+            // Estado: guardamos activas en localStorage
+            let suscripcionesActivas = JSON.parse(localStorage.getItem('suscripciones_activas')) || [];
             // total calculadora
             let totalCalc = 0;
 
@@ -437,23 +404,13 @@
             const totalSpan = document.getElementById('totalCalculo');
             const contadorActivas = document.getElementById('suscripciones-activas');
             const inputSuma = document.getElementById('inputSuma');
-            const toastEl = document.getElementById('toast');
-
-            // ------ Sistema de Toast alternativo a Alert ------
-            function showNotification(text) {
-                toastEl.textContent = text;
-                toastEl.classList.add('show');
-                setTimeout(() => {
-                    toastEl.classList.remove('show');
-                }, 2500);
-            }
 
             // ------ Renderizar grid ------
             function renderizar() {
                 grid.innerHTML = '';
                 let activas = 0;
 
-                PLATAFORMAS.forEach((p) => {
+                PLATAFORMAS.forEach((p, index) => {
                     const activo = suscripcionesActivas.includes(p.id);
                     if (activo) activas++;
 
@@ -464,15 +421,6 @@
                     img.src = p.logo;
                     img.alt = p.nombre;
                     img.loading = 'lazy';
-                    // Fallback en caso de que falle la carga del SVG desde CDN
-                    img.onerror = () => {
-                        img.style.display = 'none';
-                        const emojiFallback = document.createElement('span');
-                        emojiFallback.style.fontSize = '2rem';
-                        emojiFallback.style.marginBottom = '0.4rem';
-                        emojiFallback.textContent = '📺';
-                        card.insertBefore(emojiFallback, card.firstChild);
-                    };
                     card.appendChild(img);
 
                     const nombre = document.createElement('div');
@@ -518,9 +466,7 @@
                 document.getElementById('contadorTotal').textContent = `${PLATAFORMAS.length} plataformas`;
 
                 // guardar en localStorage
-                try {
-                    localStorage.setItem('suscripciones_activas', JSON.stringify(suscripcionesActivas));
-                } catch (e) {}
+                localStorage.setItem('suscripciones_activas', JSON.stringify(suscripcionesActivas));
             }
 
             // ------ toggle suscripción ------
@@ -553,55 +499,44 @@
                 if (totalCalc < 0) totalCalc = 0;
                 totalSpan.textContent = totalCalc.toFixed(2) + ' €';
                 inputSuma.value = '';
+                // no modificamos las suscripciones, solo la calculadora
             }
 
-            // ------ generar preview para PNG/PDF ------
+            // ------ generar preview para PNG/PDF (con logos) ------
             function generarPreview() {
                 const preview = document.getElementById('captura-preview');
                 preview.innerHTML = '';
                 const activas = suscripcionesActivas.map(id => PLATAFORMAS.find(p => p.id === id)).filter(Boolean);
-                
                 if (activas.length === 0) {
                     const msg = document.createElement('p');
-                    msg.style.fontWeight = '700';
-                    msg.style.fontSize = '1.2rem';
-                    msg.textContent = 'No hay suscripciones activas seleccionadas';
+                    msg.textContent = 'No hay suscripciones activas';
                     preview.appendChild(msg);
                 } else {
                     activas.forEach(p => {
                         const div = document.createElement('div');
                         div.className = 'item-preview';
-                        
                         const img = document.createElement('img');
                         img.src = p.logo;
                         img.alt = p.nombre;
-                        img.onerror = () => {
-                            img.style.display = 'none';
-                        };
                         div.appendChild(img);
-                        
                         const nom = document.createElement('div');
                         nom.className = 'nombre-preview';
                         nom.textContent = p.nombre;
                         div.appendChild(nom);
-                        
                         const prec = document.createElement('div');
                         prec.className = 'precio-preview';
                         prec.textContent = `${p.precio.toFixed(2)} €`;
                         div.appendChild(prec);
-                        
                         preview.appendChild(div);
                     });
-                    
                     // total
                     const total = activas.reduce((acc, p) => acc + p.precio, 0);
                     const totalDiv = document.createElement('div');
                     totalDiv.style.width = '100%';
                     totalDiv.style.textAlign = 'center';
-                    totalDiv.style.marginTop = '2rem';
-                    totalDiv.style.fontWeight = '800';
-                    totalDiv.style.fontSize = '1.4rem';
-                    totalDiv.textContent = `Total Mensual: ${total.toFixed(2)} €`;
+                    totalDiv.style.marginTop = '1rem';
+                    totalDiv.style.fontWeight = '700';
+                    totalDiv.textContent = `Total: ${total.toFixed(2)} €`;
                     preview.appendChild(totalDiv);
                 }
                 return preview;
@@ -609,75 +544,63 @@
 
             // ------ descargar PNG ------
             function descargarPNG() {
-                showNotification("Generando imagen PNG...");
                 const preview = generarPreview();
                 preview.style.position = 'fixed';
                 preview.style.top = '0';
                 preview.style.left = '0';
                 preview.style.width = '800px';
                 preview.style.background = 'white';
-                preview.style.padding = '2.5rem';
+                preview.style.padding = '2rem';
                 preview.style.zIndex = '9999';
                 preview.style.display = 'flex';
                 preview.style.flexWrap = 'wrap';
                 preview.style.justifyContent = 'center';
                 preview.style.alignItems = 'center';
-                preview.style.gap = '2rem';
+                preview.style.gap = '1.5rem';
                 preview.style.borderRadius = '0';
                 document.body.appendChild(preview);
 
-                setTimeout(() => {
-                    html2canvas(preview, { scale: 2, backgroundColor: '#ffffff', useCORS: true }).then(canvas => {
-                        const link = document.createElement('a');
-                        link.download = 'Mis_Suscripciones.png';
-                        link.href = canvas.toDataURL('image/png');
-                        link.click();
-                        document.body.removeChild(preview);
-                        showNotification("¡PNG descargado con éxito!");
-                    }).catch((err) => {
-                        console.error(err);
-                        document.body.removeChild(preview);
-                        showNotification("Error al generar la imagen.");
-                    });
-                }, 500);
+                html2canvas(preview, { scale: 2, backgroundColor: '#ffffff' }).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = 'suscripciones.png';
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                    document.body.removeChild(preview);
+                }).catch(() => {
+                    document.body.removeChild(preview);
+                });
             }
 
             // ------ descargar PDF ------
             function descargarPDF() {
-                showNotification("Generando reporte PDF...");
                 const preview = generarPreview();
                 preview.style.position = 'fixed';
                 preview.style.top = '0';
                 preview.style.left = '0';
                 preview.style.width = '800px';
                 preview.style.background = 'white';
-                preview.style.padding = '2.5rem';
+                preview.style.padding = '2rem';
                 preview.style.zIndex = '9999';
                 preview.style.display = 'flex';
                 preview.style.flexWrap = 'wrap';
                 preview.style.justifyContent = 'center';
                 preview.style.alignItems = 'center';
-                preview.style.gap = '2rem';
+                preview.style.gap = '1.5rem';
                 preview.style.borderRadius = '0';
                 document.body.appendChild(preview);
 
-                setTimeout(() => {
-                    html2canvas(preview, { scale: 2, backgroundColor: '#ffffff', useCORS: true }).then(canvas => {
-                        const imgData = canvas.toDataURL('image/png');
-                        const { jsPDF } = window.jspdf;
-                        const pdf = new jsPDF('p', 'mm', 'a4');
-                        const pdfWidth = pdf.internal.pageSize.getWidth();
-                        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-                        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-                        pdf.save('Reporte_Suscripciones.pdf');
-                        document.body.removeChild(preview);
-                        showNotification("¡PDF exportado con éxito!");
-                    }).catch((err) => {
-                        console.error(err);
-                        document.body.removeChild(preview);
-                        showNotification("Error al generar el PDF.");
-                    });
-                }, 500);
+                html2canvas(preview, { scale: 2, backgroundColor: '#ffffff' }).then(canvas => {
+                    const imgData = canvas.toDataURL('image/png');
+                    const { jsPDF } = window.jspdf;
+                    const pdf = new jsPDF('p', 'mm', 'a4');
+                    const pdfWidth = pdf.internal.pageSize.getWidth();
+                    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+                    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                    pdf.save('suscripciones.pdf');
+                    document.body.removeChild(preview);
+                }).catch(() => {
+                    document.body.removeChild(preview);
+                });
             }
 
             // ------ reset ------
@@ -686,52 +609,43 @@
                 totalCalc = 0;
                 totalSpan.textContent = '0.00 €';
                 inputSuma.value = '';
-                try {
-                    localStorage.setItem('suscripciones_activas', JSON.stringify(suscripcionesActivas));
-                } catch (e) {}
+                localStorage.setItem('suscripciones_activas', JSON.stringify(suscripcionesActivas));
                 renderizar();
-                showNotification("Suscripciones reiniciadas.");
             }
 
             // ------ Three.js decorativo (esfera y anillos) ------
             function initThree() {
                 const container = document.getElementById('three-canvas');
-                if (!container || typeof THREE === 'undefined') return;
-
                 const scene = new THREE.Scene();
                 const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 1000);
                 camera.position.set(0, 0, 4);
 
                 const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-                const size = 140;
-                renderer.setSize(size, size);
+                renderer.setSize(140, 140);
                 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
                 container.appendChild(renderer.domElement);
 
-                // Geometría principal estilizada
                 const geometry = new THREE.IcosahedronGeometry(1, 0);
                 const material = new THREE.MeshStandardMaterial({
                     color: 0x2563eb,
                     wireframe: false,
-                    roughness: 0.2,
-                    metalness: 0.8,
+                    roughness: 0.3,
+                    metalness: 0.1,
                     transparent: true,
-                    opacity: 0.7
+                    opacity: 0.6
                 });
                 const sphere = new THREE.Mesh(geometry, material);
                 scene.add(sphere);
 
-                // Estructura externa
                 const wireframe = new THREE.Mesh(
-                    new THREE.IcosahedronGeometry(1.15, 1),
-                    new THREE.MeshBasicMaterial({ wireframe: true, color: 0x94a3b8, transparent: true, opacity: 0.3 })
+                    new THREE.IcosahedronGeometry(1.05, 1),
+                    new THREE.MeshBasicMaterial({ wireframe: true, color: 0x94a3b8, transparent: true, opacity: 0.2 })
                 );
                 scene.add(wireframe);
 
-                // Luces para un renderizado brillante
                 const ambient = new THREE.AmbientLight(0xffffff, 0.8);
                 scene.add(ambient);
-                const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
+                const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
                 dirLight.position.set(1, 2, 3);
                 scene.add(dirLight);
 
@@ -739,17 +653,17 @@
                 function animate() {
                     requestAnimationFrame(animate);
                     time += 0.005;
-                    sphere.rotation.x = time * 0.4;
-                    sphere.rotation.y = time * 0.6;
-                    wireframe.rotation.x = -time * 0.2;
-                    wireframe.rotation.y = -time * 0.3;
+                    sphere.rotation.x = time * 0.3;
+                    sphere.rotation.y = time * 0.5;
+                    wireframe.rotation.x = time * 0.3;
+                    wireframe.rotation.y = time * 0.5;
                     renderer.render(scene, camera);
                 }
                 animate();
 
-                // Responsive para el canvas
+                // responsive
                 window.addEventListener('resize', () => {
-                    const w = Math.min(140, window.innerWidth * 0.25);
+                    const w = Math.min(140, window.innerWidth * 0.2);
                     renderer.setSize(w, w);
                 });
             }
@@ -764,25 +678,22 @@
             document.getElementById('btnResetCalc').addEventListener('click', () => {
                 totalCalc = 0;
                 totalSpan.textContent = '0.00 €';
-                inputSuma.value = '0';
-                showNotification("Calculadora reiniciada.");
+                inputSuma.value = '';
             });
 
             document.getElementById('btnPng').addEventListener('click', descargarPNG);
             document.getElementById('btnPdf').addEventListener('click', descargarPDF);
             document.getElementById('resetAll').addEventListener('click', resetTodo);
 
+            // Inicializar
+            renderizar();
+            initThree();
+            actualizarCalculoTotal();
+
             // Enter en input suma
             document.getElementById('inputSuma').addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') operar('suma');
             });
-
-            // Inicializar al cargar el DOM
-            window.onload = function() {
-                renderizar();
-                initThree();
-                actualizarCalculoTotal();
-            };
 
         })();
     </script>

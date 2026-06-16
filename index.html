@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AXIOM DIARIO · Diario Definitivo</title>
+    <title>AXIOM ALARM · Recordatorios</title>
     <style>
         /* ===== RESET Y ESTILOS BASE ===== */
         * {
@@ -13,7 +13,7 @@
         }
 
         :root {
-            --bg: #f8f5f0;
+            --bg: #f5f3f0;
             --text: #1a1a1a;
             --border: #e0d8d0;
             --card: #ffffff;
@@ -22,6 +22,9 @@
             --radius: 12px;
             --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             --transition: 0.3s ease;
+            --high: #e74c3c;
+            --medium: #f39c12;
+            --low: #2ecc71;
         }
 
         body {
@@ -42,17 +45,9 @@
             --accent: #8a9baa;
         }
 
-        body.sepia {
-            --bg: #f4ecd8;
-            --text: #2c1810;
-            --border: #d4c4a8;
-            --card: #faf3e8;
-        }
-
         .container {
-            max-width: 1000px;
+            max-width: 800px;
             margin: 0 auto;
-            padding: 0.5rem;
         }
 
         /* ===== HEADER ===== */
@@ -129,245 +124,270 @@
             font-size: 0.65rem;
         }
 
-        /* ===== CALENDARIO Y NAVEGACIÓN ===== */
-        .nav-bar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.8rem;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0.8rem 1.2rem;
-            background: var(--card);
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-            margin-bottom: 1.2rem;
+        .btn-danger {
+            border-color: #e74c3c;
+            color: #e74c3c;
         }
 
-        .date-nav {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            flex-wrap: wrap;
+        .btn-danger:hover {
+            background: #e74c3c;
+            color: white;
         }
 
-        .date-nav .date-display {
-            font-size: 1.1rem;
-            font-weight: 500;
-            min-width: 140px;
-            text-align: center;
-        }
-
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 2px;
-            max-width: 350px;
-            margin: 0.5rem auto;
-        }
-
-        .calendar-grid .day {
-            padding: 0.4rem 0.2rem;
-            text-align: center;
-            font-size: 0.7rem;
-            border-radius: 4px;
-            cursor: pointer;
-            border: 1px solid transparent;
-            transition: all var(--transition);
-        }
-
-        .calendar-grid .day:hover {
-            background: var(--border);
-        }
-
-        .calendar-grid .day.has-entry {
-            border-color: var(--accent);
-            font-weight: 600;
-        }
-
-        .calendar-grid .day.today {
-            background: var(--accent);
-            color: var(--bg);
-        }
-
-        .calendar-grid .day.empty {
-            opacity: 0.2;
-            cursor: default;
-        }
-
-        /* ===== EDITOR ===== */
-        .editor-wrapper {
+        /* ===== FORMULARIO ===== */
+        .form-card {
             background: var(--card);
             border-radius: var(--radius);
             border: 1px solid var(--border);
             padding: 1.5rem;
-            margin-bottom: 1.2rem;
+            margin-bottom: 1.5rem;
             transition: all var(--transition);
         }
 
-        .editor-toolbar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.3rem;
-            padding-bottom: 0.8rem;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 1rem;
-        }
-
-        #entryTitle {
-            width: 100%;
-            padding: 0.6rem 0.2rem;
-            font-size: 1.4rem;
-            font-weight: 300;
-            border: none;
-            border-bottom: 1px solid var(--border);
-            background: transparent;
-            color: var(--text);
-            font-family: 'Georgia', serif;
-            outline: none;
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
             margin-bottom: 0.8rem;
         }
 
-        #entryContent {
-            width: 100%;
-            min-height: 350px;
-            padding: 0.5rem 0.2rem;
-            font-size: 1rem;
-            line-height: 1.8;
-            border: none;
-            background: transparent;
-            color: var(--text);
-            resize: vertical;
-            outline: none;
-            font-family: var(--font);
-        }
-
-        .editor-meta {
+        .form-group {
             display: flex;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-            padding-top: 0.8rem;
-            border-top: 1px solid var(--border);
-            margin-top: 0.8rem;
-            font-size: 0.75rem;
-            opacity: 0.6;
+            flex-direction: column;
+            gap: 0.3rem;
         }
 
-        .editor-meta select, .editor-meta input {
-            background: transparent;
+        .form-group label {
+            font-size: 0.7rem;
+            font-weight: 500;
+            opacity: 0.6;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 0.5rem 0.7rem;
             border: 1px solid var(--border);
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
+            border-radius: 6px;
+            background: transparent;
             color: var(--text);
             font-family: inherit;
+            font-size: 0.9rem;
+            outline: none;
+            transition: all var(--transition);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: var(--accent);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .form-group input[type="color"] {
+            padding: 0.2rem;
+            height: 38px;
+            cursor: pointer;
+        }
+
+        .form-group input[type="file"] {
+            padding: 0.3rem;
             font-size: 0.7rem;
         }
 
-        /* ===== STATS ===== */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 0.8rem;
-            padding: 1rem 1.2rem;
-            background: var(--card);
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-            margin-bottom: 1.2rem;
+        .form-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.8rem;
+            flex-wrap: wrap;
         }
 
-        .stat-item {
-            text-align: center;
+        .full-width {
+            grid-column: 1 / -1;
         }
 
-        .stat-item .number {
-            font-size: 1.6rem;
-            font-weight: 300;
-            display: block;
-            font-family: 'Georgia', serif;
-        }
-
-        .stat-item .label {
-            font-size: 0.6rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            opacity: 0.5;
-        }
-
-        /* ===== LISTA DE ENTRADAS ===== */
-        .entries-list {
+        /* ===== LISTA DE RECORDATORIOS ===== */
+        .reminders-list {
             background: var(--card);
             border-radius: var(--radius);
             border: 1px solid var(--border);
             padding: 1rem;
-            max-height: 300px;
+            max-height: 500px;
             overflow-y: auto;
         }
 
-        .entry-item {
-            padding: 0.6rem 0.8rem;
-            border-bottom: 1px solid var(--border);
-            cursor: pointer;
+        .reminder-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid var(--border);
+            gap: 0.5rem;
             transition: all var(--transition);
+            border-left: 4px solid var(--accent);
         }
 
-        .entry-item:hover {
-            background: var(--border);
-            border-radius: 4px;
+        .reminder-item:last-child {
+            border-bottom: none;
         }
 
-        .entry-item .entry-date {
-            font-size: 0.75rem;
+        .reminder-item .reminder-info {
+            flex: 1;
+        }
+
+        .reminder-item .reminder-title {
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .reminder-item .reminder-meta {
+            font-size: 0.7rem;
             opacity: 0.6;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.2rem;
         }
 
-        .entry-item .entry-preview {
-            font-size: 0.85rem;
-            max-width: 300px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+        .reminder-item .reminder-meta span {
+            background: var(--border);
+            padding: 0.1rem 0.5rem;
+            border-radius: 12px;
         }
 
-        .entry-item .entry-tags {
-            font-size: 0.6rem;
-            opacity: 0.5;
-        }
-
-        /* ===== ESTADOS DE ÁNIMO ===== */
-        .mood-selector {
+        .reminder-item .reminder-actions {
             display: flex;
             gap: 0.3rem;
             flex-wrap: wrap;
         }
 
-        .mood-btn {
-            padding: 0.2rem 0.6rem;
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            background: transparent;
-            color: var(--text);
-            cursor: pointer;
-            font-size: 0.7rem;
-            transition: all var(--transition);
+        .reminder-item.priority-high {
+            border-left-color: var(--high);
         }
 
-        .mood-btn.active {
-            background: var(--accent);
-            color: var(--bg);
-            border-color: var(--accent);
+        .reminder-item.priority-medium {
+            border-left-color: var(--medium);
+        }
+
+        .reminder-item.priority-low {
+            border-left-color: var(--low);
+        }
+
+        .reminder-item.completed {
+            opacity: 0.4;
+            text-decoration: line-through;
+        }
+
+        .reminder-item .badge {
+            font-size: 0.6rem;
+            padding: 0.1rem 0.5rem;
+            border-radius: 12px;
+            background: var(--border);
+            display: inline-block;
+        }
+
+        .badge-repeating {
+            background: #3498db !important;
+            color: white !important;
+        }
+
+        /* ===== CONTADOR ===== */
+        .stats-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            padding: 0.8rem 1.2rem;
+            background: var(--card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            margin-bottom: 1rem;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stats-bar .stat {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .stats-bar .stat strong {
+            font-size: 1.1rem;
+            opacity: 1;
+        }
+
+        /* ===== NOTIFICACIÓN DE ALARMA ===== */
+        .alarm-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.5s;
+        }
+
+        .alarm-overlay.active {
+            display: flex;
+        }
+
+        .alarm-box {
+            background: var(--card);
+            color: var(--text);
+            padding: 2.5rem;
+            border-radius: 20px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: bounceIn 0.5s;
+        }
+
+        .alarm-box h2 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            font-family: 'Georgia', serif;
+        }
+
+        .alarm-box .alarm-message {
+            font-size: 1.1rem;
+            opacity: 0.7;
+            margin: 0.5rem 0 1.5rem;
+        }
+
+        .alarm-box .btn {
+            font-size: 1.2rem;
+            padding: 0.8rem 2rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            60% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
         }
 
         /* ===== RESPONSIVE ===== */
-        @media (max-width: 700px) {
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
             .header { flex-direction: column; align-items: stretch; }
             .header h1 { font-size: 1.4rem; }
-            .nav-bar { flex-direction: column; }
-            .calendar-grid { max-width: 100%; }
-            .stats-grid { grid-template-columns: repeat(3, 1fr); }
-            .editor-wrapper { padding: 1rem; }
-            #entryContent { min-height: 200px; }
+            .reminder-item { flex-wrap: wrap; }
+            .alarm-box { padding: 1.5rem; }
         }
 
         /* Scrollbar */
@@ -381,476 +401,643 @@
 <div class="container">
     <!-- HEADER -->
     <header class="header">
-        <h1>AXIOM <span>DIARIO</span></h1>
+        <h1>AXIOM <span>ALARM</span></h1>
         <div class="header-actions">
             <button class="btn btn-sm" id="themeToggle">Light Mode</button>
-            <button class="btn btn-sm" id="themeSepia">Sepia</button>
-            <button class="btn btn-sm" id="exportTxt">.txt</button>
-            <button class="btn btn-sm" id="exportMd">.md</button>
-            <button class="btn btn-sm" id="exportJson">.json</button>
-            <button class="btn btn-sm btn-primary" id="importJson">⬆ Import</button>
-            <button class="btn btn-sm" id="exportPdf">PDF</button>
-            <button class="btn btn-sm" id="printEntry">🖨️ Print</button>
+            <button class="btn btn-sm" id="exportJson">⬇️ Backup</button>
+            <button class="btn btn-sm" id="importJson">⬆️ Import</button>
+            <button class="btn btn-sm btn-danger" id="clearAll">🗑️ Limpiar todo</button>
         </div>
     </header>
 
-    <!-- NAV + CALENDAR -->
-    <div class="nav-bar">
-        <div class="date-nav">
-            <button class="btn btn-sm" id="prevDay">◀</button>
-            <span class="date-display" id="currentDateDisplay">Hoy</span>
-            <button class="btn btn-sm" id="nextDay">▶</button>
-            <button class="btn btn-sm" id="todayBtn">Hoy</button>
-        </div>
-        <div>
-            <button class="btn btn-sm" id="showCalendar">📅 Calendario</button>
-            <button class="btn btn-sm" id="showEntries">📋 Lista</button>
-            <button class="btn btn-sm btn-primary" id="newEntryBtn">+ Nueva</button>
-        </div>
-    </div>
-
-    <!-- CALENDARIO (oculto) -->
-    <div id="calendarContainer" style="display:none; background:var(--card); border-radius:var(--radius); border:1px solid var(--border); padding:1rem; margin-bottom:1rem;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem;">
-            <button class="btn btn-sm" id="prevMonth">◀</button>
-            <span id="monthYearDisplay" style="font-weight:500;">Enero 2025</span>
-            <button class="btn btn-sm" id="nextMonth">▶</button>
-        </div>
-        <div class="calendar-grid" id="calendarGrid"></div>
-    </div>
-
-    <!-- LISTA DE ENTRADAS (oculta) -->
-    <div id="entriesContainer" style="display:none; margin-bottom:1rem;">
-        <div class="entries-list" id="entriesList"></div>
-    </div>
-
-    <!-- EDITOR -->
-    <div class="editor-wrapper">
-        <div class="editor-toolbar">
-            <button class="btn btn-sm" id="boldBtn">B</button>
-            <button class="btn btn-sm" id="italicBtn">I</button>
-            <button class="btn btn-sm" id="underlineBtn">U</button>
-            <button class="btn btn-sm" id="strikeBtn">S</button>
-            <button class="btn btn-sm" id="h1Btn">H1</button>
-            <button class="btn btn-sm" id="h2Btn">H2</button>
-            <button class="btn btn-sm" id="quoteBtn">"</button>
-            <button class="btn btn-sm" id="listBtn">•</button>
-            <button class="btn btn-sm" id="listNumBtn">1.</button>
-            <button class="btn btn-sm" id="alignLeft">←</button>
-            <button class="btn btn-sm" id="alignCenter">↔</button>
-            <button class="btn btn-sm" id="alignRight">→</button>
-            <button class="btn btn-sm" id="fontSmall">A-</button>
-            <button class="btn btn-sm" id="fontLarge">A+</button>
-            <button class="btn btn-sm" id="focusMode">◎ Focus</button>
-        </div>
-
-        <input type="text" id="entryTitle" placeholder="Título de la entrada...">
-
-        <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.5rem;">
-            <select id="moodSelect" style="padding:0.2rem 0.5rem; border:1px solid var(--border); border-radius:4px; background:transparent; color:var(--text); font-size:0.7rem;">
-                <option value="">Estado de ánimo</option>
-                <option value="feliz">Feliz</option>
-                <option value="triste">Triste</option>
-                <option value="enojado">Enojado</option>
-                <option value="ansioso">Ansioso</option>
-                <option value="relajado">Relajado</option>
-                <option value="inspirado">Inspirado</option>
-                <option value="cansado">Cansado</option>
-                <option value="enamorado">Enamorado</option>
-                <option value="confundido">Confundido</option>
-                <option value="agradecido">Agradecido</option>
-            </select>
-            <input type="text" id="tagsInput" placeholder="Tags (separados por ,)" style="flex:1; padding:0.2rem 0.5rem; border:1px solid var(--border); border-radius:4px; background:transparent; color:var(--text); font-size:0.7rem;">
-            <input type="text" id="locationInput" placeholder="Ubicación" style="flex:1; padding:0.2rem 0.5rem; border:1px solid var(--border); border-radius:4px; background:transparent; color:var(--text); font-size:0.7rem;">
-        </div>
-
-        <textarea id="entryContent" placeholder="Escribe tu entrada aquí..."></textarea>
-
-        <div class="editor-meta">
-            <span>Palabras: <strong id="wordCount">0</strong></span>
-            <span>Caracteres: <strong id="charCount">0</strong></span>
-            <span>⏱️ <span id="readingTime">0</span> min lectura</span>
-            <span>Racha: <strong id="streakCount">0</strong> días</span>
-            <span>Total: <strong id="totalWords">0</strong> palabras</span>
-            <span style="margin-left:auto;">🕒 <span id="lastSaved">Guardado automático</span></span>
-        </div>
-    </div>
-
     <!-- STATS -->
-    <div class="stats-grid">
-        <div class="stat-item"><span class="number" id="totalEntries">0</span><span class="label">Entradas</span></div>
-        <div class="stat-item"><span class="number" id="totalWordsStat">0</span><span class="label">Palabras totales</span></div>
-        <div class="stat-item"><span class="number" id="avgWords">0</span><span class="label">Promedio/día</span></div>
-        <div class="stat-item"><span class="number" id="bestStreak">0</span><span class="label">Mejor racha</span></div>
-        <div class="stat-item"><span class="number" id="currentStreak">0</span><span class="label">Racha actual</span></div>
-        <div class="stat-item"><span class="number" id="daysSinceStart">0</span><span class="label">Días totales</span></div>
+    <div class="stats-bar">
+        <span class="stat">⏰ Pendientes: <strong id="pendingCount">0</strong></span>
+        <span class="stat">✅ Completados: <strong id="completedCount">0</strong></span>
+        <span class="stat">📊 Total: <strong id="totalCount">0</strong></span>
+        <span class="stat">🔔 Próximo: <strong id="nextReminder">—</strong></span>
     </div>
 
-    <!-- BOTONES DE ACCIÓN RÁPIDA -->
-    <div style="display:flex; flex-wrap:wrap; gap:0.4rem; justify-content:center; margin-top:0.5rem;">
-        <button class="btn btn-sm" id="challengeBtn">🎯 Desafío del día</button>
-        <button class="btn btn-sm" id="randomEntryBtn">🎲 Entrada aleatoria</button>
-        <button class="btn btn-sm" id="gratitudeBtn">🙏 Ejercicio de gratitud</button>
-        <button class="btn btn-sm" id="affirmationBtn">✨ Afirmación positiva</button>
-        <button class="btn btn-sm" id="exportAllTxt">📚 Exportar todo .txt</button>
+    <!-- FORMULARIO -->
+    <div class="form-card">
+        <h3 style="font-weight:300; margin-bottom:1rem; font-family:'Georgia',serif;">📝 Nuevo recordatorio</h3>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Título *</label>
+                <input type="text" id="reminderTitle" placeholder="Ej: Reunión importante">
+            </div>
+            <div class="form-group">
+                <label>Prioridad</label>
+                <select id="reminderPriority">
+                    <option value="low">Baja</option>
+                    <option value="medium" selected>Media</option>
+                    <option value="high">Alta</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Fecha *</label>
+                <input type="date" id="reminderDate">
+            </div>
+            <div class="form-group">
+                <label>Hora *</label>
+                <input type="time" id="reminderTime">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group full-width">
+                <label>Mensaje (opcional)</label>
+                <textarea id="reminderMessage" placeholder="Mensaje adicional..."></textarea>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Categoría</label>
+                <input type="text" id="reminderCategory" placeholder="Trabajo, Personal, Salud...">
+            </div>
+            <div class="form-group">
+                <label>Color</label>
+                <input type="color" id="reminderColor" value="#2c3e50">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Repetir</label>
+                <select id="reminderRepeat">
+                    <option value="none">No repetir</option>
+                    <option value="daily">Diario</option>
+                    <option value="weekly">Semanal</option>
+                    <option value="monthly">Mensual</option>
+                    <option value="yearly">Anual</option>
+                    <option value="custom">Personalizado (minutos)</option>
+                </select>
+            </div>
+            <div class="form-group" id="customRepeatGroup" style="display:none;">
+                <label>Cada X minutos</label>
+                <input type="number" id="customRepeatMinutes" value="5" min="1" max="1440">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Sonido de alarma</label>
+                <select id="alarmSound">
+                    <option value="default">🔔 Predeterminado</option>
+                    <option value="gentle">🔔 Suave</option>
+                    <option value="urgent">🔔 Urgente</option>
+                    <option value="custom">🎵 Personalizado</option>
+                </select>
+            </div>
+            <div class="form-group" id="customSoundGroup" style="display:none;">
+                <label>Subir audio</label>
+                <input type="file" id="customSoundFile" accept="audio/*">
+            </div>
+        </div>
+        <div class="form-actions">
+            <button class="btn btn-primary" id="saveReminder">➕ Guardar recordatorio</button>
+            <button class="btn" id="testAlarm">🔔 Probar alarma</button>
+            <button class="btn" id="requestPermission">🔔 Activar notificaciones</button>
+        </div>
+    </div>
+
+    <!-- LISTA DE RECORDATORIOS -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+        <h3 style="font-weight:300; font-family:'Georgia',serif;">📋 Recordatorios</h3>
+        <div>
+            <button class="btn btn-sm" id="showAll">Todos</button>
+            <button class="btn btn-sm" id="showPending">Pendientes</button>
+            <button class="btn btn-sm" id="showCompleted">Completados</button>
+        </div>
+    </div>
+    <div class="reminders-list" id="remindersList"></div>
+</div>
+
+<!-- ALARMA OVERLAY -->
+<div class="alarm-overlay" id="alarmOverlay">
+    <div class="alarm-box">
+        <h2>⏰ ¡Recordatorio!</h2>
+        <div class="alarm-message" id="alarmMessage">Hora de tu recordatorio</div>
+        <div style="margin:0.5rem 0; font-size:0.8rem; opacity:0.5;" id="alarmTime"></div>
+        <button class="btn btn-primary" id="dismissAlarm">✅ Aceptar</button>
+        <button class="btn" id="snoozeAlarm" style="margin-left:0.5rem;">⏰ Posponer 5 min</button>
     </div>
 </div>
 
 <script>
     // ============================================================
-    //  AXIOM DIARIO · TODAS LAS 330 FUNCIONES
-    //  Versión 1.0 · Todo en un solo archivo
+    //  AXIOM ALARM · SISTEMA DE RECORDATORIOS CON ALARMA
+    //  Versión 1.0 · Todas las funciones
     // ============================================================
 
-    // ----- ESTADO GLOBAL -----
-    const state = {
-        entries: {},
-        currentDate: new Date(),
-        selectedDate: new Date(),
-        streak: 0,
-        bestStreak: 0,
-        totalWords: 0,
-        totalEntries: 0,
-        darkMode: false,
-        sepiaMode: false,
-        focusMode: false,
-        fontSize: 'medium',
-        fontFamily: 'Inter',
-        mood: '',
-        tags: [],
-        location: '',
-        calendarView: false,
-        entriesView: false,
-        currentMonth: new Date().getMonth(),
-        currentYear: new Date().getFullYear(),
-    };
+    // ----- ESTADO -----
+    let reminders = [];
+    let alarmTimeout = null;
+    let alarmInterval = null;
+    let alarmAudio = null;
+    let alarmVibrate = null;
+    let currentAlarmId = null;
+    let filterMode = 'all'; // all, pending, completed
+    let darkMode = false;
+    let notificationPermission = false;
+    let customSound = null;
 
     // ----- DOM ELEMENTOS -----
-    const entryTitle = document.getElementById('entryTitle');
-    const entryContent = document.getElementById('entryContent');
-    const currentDateDisplay = document.getElementById('currentDateDisplay');
-    const wordCount = document.getElementById('wordCount');
-    const charCount = document.getElementById('charCount');
-    const readingTime = document.getElementById('readingTime');
-    const streakCount = document.getElementById('streakCount');
-    const totalWords = document.getElementById('totalWords');
-    const lastSaved = document.getElementById('lastSaved');
-    const totalEntries = document.getElementById('totalEntries');
-    const totalWordsStat = document.getElementById('totalWordsStat');
-    const avgWords = document.getElementById('avgWords');
-    const bestStreak = document.getElementById('bestStreak');
-    const currentStreak = document.getElementById('currentStreak');
-    const daysSinceStart = document.getElementById('daysSinceStart');
-    const moodSelect = document.getElementById('moodSelect');
-    const tagsInput = document.getElementById('tagsInput');
-    const locationInput = document.getElementById('locationInput');
+    const reminderTitle = document.getElementById('reminderTitle');
+    const reminderDate = document.getElementById('reminderDate');
+    const reminderTime = document.getElementById('reminderTime');
+    const reminderPriority = document.getElementById('reminderPriority');
+    const reminderMessage = document.getElementById('reminderMessage');
+    const reminderCategory = document.getElementById('reminderCategory');
+    const reminderColor = document.getElementById('reminderColor');
+    const reminderRepeat = document.getElementById('reminderRepeat');
+    const customRepeatGroup = document.getElementById('customRepeatGroup');
+    const customRepeatMinutes = document.getElementById('customRepeatMinutes');
+    const alarmSound = document.getElementById('alarmSound');
+    const customSoundGroup = document.getElementById('customSoundGroup');
+    const customSoundFile = document.getElementById('customSoundFile');
+    const remindersList = document.getElementById('remindersList');
+    const pendingCount = document.getElementById('pendingCount');
+    const completedCount = document.getElementById('completedCount');
+    const totalCount = document.getElementById('totalCount');
+    const nextReminder = document.getElementById('nextReminder');
+    const alarmOverlay = document.getElementById('alarmOverlay');
+    const alarmMessage = document.getElementById('alarmMessage');
+    const alarmTime = document.getElementById('alarmTime');
 
     // ----- FUNCIONES PRINCIPALES -----
 
-    // Formatear fecha
-    function formatDate(date) {
-        const d = new Date(date);
-        return d.toISOString().split('T')[0];
-    }
-
-    function formatDateDisplay(date) {
-        const d = new Date(date);
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        return d.toLocaleDateString('es-ES', options);
-    }
-
-    function getToday() {
-        return formatDate(new Date());
-    }
-
-    // Cargar datos guardados
+    // Cargar datos
     function loadData() {
         try {
-            const saved = localStorage.getItem('axiom_diario_entries');
-            if (saved) state.entries = JSON.parse(saved);
+            const saved = localStorage.getItem('axiom_alarm_reminders');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                // Convertir fechas string a Date
+                reminders = parsed.map(r => ({
+                    ...r,
+                    date: new Date(r.date),
+                    createdAt: new Date(r.createdAt)
+                }));
+            }
             
-            const prefs = localStorage.getItem('axiom_diario_prefs');
+            const prefs = localStorage.getItem('axiom_alarm_prefs');
             if (prefs) {
                 const p = JSON.parse(prefs);
-                state.darkMode = p.darkMode || false;
-                state.sepiaMode = p.sepiaMode || false;
-                state.fontSize = p.fontSize || 'medium';
-                state.fontFamily = p.fontFamily || 'Inter';
-                state.currentDate = new Date(p.currentDate || new Date());
-                state.selectedDate = new Date(p.selectedDate || new Date());
-                state.streak = p.streak || 0;
-                state.bestStreak = p.bestStreak || 0;
-                state.totalWords = p.totalWords || 0;
-                state.totalEntries = p.totalEntries || 0;
+                darkMode = p.darkMode || false;
+                if (darkMode) document.body.classList.add('dark');
+                document.getElementById('themeToggle').textContent = darkMode ? 'Dark Mode' : 'Light Mode';
             }
-        } catch(e) { console.log('Error cargando datos', e); }
+        } catch(e) { console.log('Error cargando', e); }
         
+        renderReminders();
         updateStats();
-        applyTheme();
-        renderCalendar();
-        loadEntryForDate(state.selectedDate);
-        updateUI();
+        checkAlarms();
+        setDefaultDates();
     }
 
     // Guardar datos
     function saveData() {
         try {
-            localStorage.setItem('axiom_diario_entries', JSON.stringify(state.entries));
-            localStorage.setItem('axiom_diario_prefs', JSON.stringify({
-                darkMode: state.darkMode,
-                sepiaMode: state.sepiaMode,
-                fontSize: state.fontSize,
-                fontFamily: state.fontFamily,
-                currentDate: state.currentDate,
-                selectedDate: state.selectedDate,
-                streak: state.streak,
-                bestStreak: state.bestStreak,
-                totalWords: state.totalWords,
-                totalEntries: state.totalEntries
+            localStorage.setItem('axiom_alarm_reminders', JSON.stringify(reminders));
+            localStorage.setItem('axiom_alarm_prefs', JSON.stringify({
+                darkMode: darkMode
             }));
-            lastSaved.textContent = 'Guardado: ' + new Date().toLocaleTimeString();
         } catch(e) { console.log('Error guardando', e); }
     }
 
-    // Guardar entrada actual
-    function saveCurrentEntry() {
-        const dateKey = formatDate(state.selectedDate);
-        const title = entryTitle.value.trim();
-        const content = entryContent.value.trim();
-        
-        if (!title && !content) {
-            // Si está vacío y no hay entrada, eliminar
-            if (state.entries[dateKey]) {
-                delete state.entries[dateKey];
-                updateStats();
-                saveData();
-                renderCalendar();
-                updateUI();
-            }
-            return;
-        }
+    // Guardar recordatorio
+    function saveReminder() {
+        const title = reminderTitle.value.trim();
+        const date = reminderDate.value;
+        const time = reminderTime.value;
+        const priority = reminderPriority.value;
+        const message = reminderMessage.value.trim();
+        const category = reminderCategory.value.trim();
+        const color = reminderColor.value;
+        const repeat = reminderRepeat.value;
+        const customMinutes = parseInt(customRepeatMinutes.value) || 5;
 
-        const entry = {
-            title: title || 'Sin título',
-            content: content || '',
-            date: dateKey,
-            mood: moodSelect.value || '',
-            tags: tagsInput.value.split(',').map(t => t.trim()).filter(t => t),
-            location: locationInput.value || '',
-            words: content.split(/\s+/).filter(w => w).length,
-            characters: content.length,
-            updated: new Date().toISOString()
+        if (!title) { alert('Por favor, escribe un título'); return; }
+        if (!date || !time) { alert('Por favor, selecciona fecha y hora'); return; }
+
+        const reminder = {
+            id: Date.now().toString(36) + Math.random().toString(36).substr(2, 5),
+            title: title,
+            date: new Date(`${date}T${time}`),
+            priority: priority,
+            message: message,
+            category: category,
+            color: color,
+            repeat: repeat,
+            customMinutes: repeat === 'custom' ? customMinutes : null,
+            sound: alarmSound.value,
+            completed: false,
+            createdAt: new Date(),
+            snoozed: false
         };
 
-        state.entries[dateKey] = entry;
-        state.totalEntries = Object.keys(state.entries).length;
-        state.totalWords += entry.words;
-        
-        // Actualizar racha
-        updateStreak();
-        
+        reminders.push(reminder);
+        saveData();
+        renderReminders();
         updateStats();
+        checkAlarms();
+        
+        // Limpiar formulario
+        reminderTitle.value = '';
+        reminderMessage.value = '';
+        reminderCategory.value = '';
+        setDefaultDates();
+        
+        // Notificación de creación
+        if (notificationPermission) {
+            showNotification('✅ Recordatorio creado', `"${title}" para ${formatDateTime(reminder.date)}`);
+        }
+    }
+
+    // Eliminar recordatorio
+    function deleteReminder(id) {
+        if (!confirm('¿Eliminar este recordatorio?')) return;
+        reminders = reminders.filter(r => r.id !== id);
         saveData();
-        renderCalendar();
-        updateUI();
-        updateEntryList();
+        renderReminders();
+        updateStats();
+        checkAlarms();
     }
 
-    // Cargar entrada para una fecha
-    function loadEntryForDate(date) {
-        const dateKey = formatDate(date);
-        const entry = state.entries[dateKey] || { title: '', content: '', mood: '', tags: [], location: '' };
-        
-        entryTitle.value = entry.title || '';
-        entryContent.value = entry.content || '';
-        moodSelect.value = entry.mood || '';
-        tagsInput.value = (entry.tags || []).join(', ');
-        locationInput.value = entry.location || '';
-        
-        currentDateDisplay.textContent = formatDateDisplay(date);
-        updateWordCount();
-        saveData();
+    // Completar/descompletar
+    function toggleComplete(id) {
+        const reminder = reminders.find(r => r.id === id);
+        if (reminder) {
+            reminder.completed = !reminder.completed;
+            if (reminder.completed && reminder.repeat !== 'none') {
+                // Si es recurrente y se completa, programar la siguiente
+                scheduleNext(reminder);
+            }
+            saveData();
+            renderReminders();
+            updateStats();
+            checkAlarms();
+        }
     }
 
-    // Actualizar contadores
-    function updateWordCount() {
-        const content = entryContent.value;
-        const words = content.split(/\s+/).filter(w => w).length;
-        const chars = content.length;
-        const readTime = Math.ceil(words / 200);
+    // Programar siguiente repetición
+    function scheduleNext(reminder) {
+        const date = new Date(reminder.date);
+        switch(reminder.repeat) {
+            case 'daily':
+                date.setDate(date.getDate() + 1);
+                break;
+            case 'weekly':
+                date.setDate(date.getDate() + 7);
+                break;
+            case 'monthly':
+                date.setMonth(date.getMonth() + 1);
+                break;
+            case 'yearly':
+                date.setFullYear(date.getFullYear() + 1);
+                break;
+            case 'custom':
+                date.setMinutes(date.getMinutes() + (reminder.customMinutes || 5));
+                break;
+            default:
+                return;
+        }
         
-        wordCount.textContent = words;
-        charCount.textContent = chars;
-        readingTime.textContent = readTime || 1;
+        const newReminder = {
+            ...reminder,
+            id: Date.now().toString(36) + Math.random().toString(36).substr(2, 5),
+            date: date,
+            completed: false,
+            snoozed: false,
+            createdAt: new Date()
+        };
+        reminders.push(newReminder);
     }
 
-    // Actualizar estadísticas
-    function updateStats() {
-        const entries = Object.values(state.entries);
-        const total = entries.length;
-        const words = entries.reduce((acc, e) => acc + (e.words || 0), 0);
-        const avg = total > 0 ? Math.round(words / total) : 0;
-        const days = Math.floor((new Date() - new Date(state.currentDate)) / (1000 * 60 * 60 * 24)) + 1;
-
-        totalEntries.textContent = total;
-        totalWordsStat.textContent = words;
-        avgWords.textContent = avg;
-        bestStreak.textContent = state.bestStreak || 0;
-        currentStreak.textContent = state.streak || 0;
-        daysSinceStart.textContent = days > 0 ? days : 1;
-        streakCount.textContent = state.streak || 0;
-        totalWords.textContent = words;
+    // Posponer (snooze)
+    function snoozeReminder(id) {
+        const reminder = reminders.find(r => r.id === id);
+        if (reminder) {
+            const newDate = new Date(reminder.date);
+            newDate.setMinutes(newDate.getMinutes() + 5);
+            reminder.date = newDate;
+            reminder.snoozed = true;
+            saveData();
+            renderReminders();
+            updateStats();
+            checkAlarms();
+            document.getElementById('dismissAlarm').click();
+            showNotification('⏰ Pospuesto 5 minutos', `"${reminder.title}" se reprogramó para las ${formatTime(newDate)}`);
+        }
     }
 
-    // Actualizar racha
-    function updateStreak() {
-        const today = getToday();
-        const yesterday = formatDate(new Date(Date.now() - 86400000));
-        const entries = Object.keys(state.entries);
+    // ----- ALARMA -----
+    function checkAlarms() {
+        const now = new Date();
+        const pending = getPendingReminders();
         
-        if (entries.includes(today)) {
-            state.streak = (state.streak || 0) + 1;
-        } else if (entries.includes(yesterday)) {
-            // Mantener racha
+        // Buscar el próximo recordatorio
+        const next = pending.sort((a, b) => a.date - b.date)[0];
+        if (next) {
+            nextReminder.textContent = `${next.title} (${formatTime(next.date)})`;
         } else {
-            state.streak = 0;
+            nextReminder.textContent = '—';
         }
-        
-        if (state.streak > state.bestStreak) {
-            state.bestStreak = state.streak;
-        }
-    }
 
-    // ----- CALENDARIO -----
-    function renderCalendar() {
-        const grid = document.getElementById('calendarGrid');
-        const monthYear = document.getElementById('monthYearDisplay');
-        grid.innerHTML = '';
-        
-        const month = state.currentMonth;
-        const year = state.currentYear;
-        const firstDay = new Date(year, month, 1).getDay();
-        const daysInMonth = new Date(year, month + 1, 0).getDate();
-        const today = getToday();
-        
-        monthYear.textContent = new Date(year, month).toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
-        
-        // Días de la semana
-        const weekDays = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
-        weekDays.forEach(d => {
-            const el = document.createElement('div');
-            el.className = 'day';
-            el.textContent = d;
-            el.style.fontWeight = '600';
-            el.style.opacity = '0.5';
-            grid.appendChild(el);
+        // Verificar si algún recordatorio debe sonar
+        pending.forEach(reminder => {
+            const diff = reminder.date.getTime() - now.getTime();
+            if (diff <= 3000 && diff > -10000) { // 3 segundos antes o 10 después
+                triggerAlarm(reminder);
+            }
         });
+
+        // Programar siguiente verificación
+        if (alarmTimeout) clearTimeout(alarmTimeout);
+        alarmTimeout = setTimeout(checkAlarms, 5000);
+    }
+
+    function triggerAlarm(reminder) {
+        if (currentAlarmId === reminder.id) return; // Ya está sonando
+        currentAlarmId = reminder.id;
         
-        // Días vacíos
-        const startOffset = firstDay === 0 ? 6 : firstDay - 1;
-        for (let i = 0; i < startOffset; i++) {
-            const el = document.createElement('div');
-            el.className = 'day empty';
-            grid.appendChild(el);
+        // Mostrar overlay
+        alarmMessage.textContent = reminder.message || `¡Hora de "${reminder.title}"!`;
+        alarmTime.textContent = formatDateTime(reminder.date);
+        alarmOverlay.classList.add('active');
+        
+        // Sonido
+        playAlarmSound(reminder.sound);
+        
+        // Vibración
+        if (navigator.vibrate) {
+            navigator.vibrate([500, 200, 500, 200, 1000]);
         }
         
-        // Días del mes
-        for (let day = 1; day <= daysInMonth; day++) {
-            const date = new Date(year, month, day);
-            const dateKey = formatDate(date);
-            const el = document.createElement('div');
-            el.className = 'day';
-            el.textContent = day;
-            
-            if (state.entries[dateKey]) {
-                el.classList.add('has-entry');
-            }
-            
-            if (dateKey === today) {
-                el.classList.add('today');
-            }
-            
-            el.addEventListener('click', () => {
-                state.selectedDate = new Date(year, month, day);
-                loadEntryForDate(state.selectedDate);
-                document.getElementById('calendarContainer').style.display = 'none';
-                state.calendarView = false;
-            });
-            
-            grid.appendChild(el);
+        // Notificación del sistema
+        if (notificationPermission) {
+            showNotification('⏰ ¡Recordatorio!', `${reminder.title} - ${reminder.message || 'Es hora'}`);
+        }
+        
+        // Marcar como completado si no es recurrente
+        if (reminder.repeat === 'none') {
+            reminder.completed = true;
+            saveData();
+            renderReminders();
+            updateStats();
+        } else {
+            // Para recurrentes, programar siguiente y marcar actual como completado
+            reminder.completed = true;
+            scheduleNext(reminder);
+            saveData();
+            renderReminders();
+            updateStats();
         }
     }
 
-    // ----- INTERFAZ -----
-    function updateUI() {
-        // Actualizar tema
-        applyTheme();
-        // Actualizar lista de entradas
-        updateEntryList();
+    function playAlarmSound(soundType) {
+        try {
+            if (alarmAudio) {
+                alarmAudio.pause();
+                alarmAudio = null;
+            }
+            
+            let audioUrl = null;
+            
+            if (soundType === 'custom' && customSound) {
+                audioUrl = customSound;
+            } else {
+                // Generar tono según tipo
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = ctx.createOscillator();
+                const gain = ctx.createGain();
+                oscillator.connect(gain);
+                gain.connect(ctx.destination);
+                
+                let frequency = 880;
+                let type = 'sine';
+                
+                if (soundType === 'urgent') {
+                    frequency = 1000;
+                    type = 'square';
+                } else if (soundType === 'gentle') {
+                    frequency = 440;
+                    type = 'sine';
+                } else {
+                    // default: alternar tonos
+                    frequency = 880;
+                    type = 'sine';
+                }
+                
+                oscillator.frequency.value = frequency;
+                oscillator.type = type;
+                gain.gain.value = 0.3;
+                oscillator.start();
+                
+                // Hacer sonar 3 veces
+                let count = 0;
+                const interval = setInterval(() => {
+                    if (count >= 3) {
+                        clearInterval(interval);
+                        oscillator.stop();
+                        return;
+                    }
+                    oscillator.frequency.value = count % 2 === 0 ? frequency : frequency * 0.8;
+                    count++;
+                }, 300);
+                
+                // Guardar referencia para detener
+                alarmAudio = { stop: () => { clearInterval(interval); oscillator.stop(); } };
+                return;
+            }
+            
+            if (audioUrl) {
+                alarmAudio = new Audio(audioUrl);
+                alarmAudio.loop = true;
+                alarmAudio.volume = 0.7;
+                alarmAudio.play().catch(e => console.log('Error reproduciendo audio', e));
+            }
+        } catch(e) {
+            console.log('Error con el sonido', e);
+        }
     }
 
-    function updateEntryList() {
-        const container = document.getElementById('entriesList');
-        container.innerHTML = '';
-        const entries = Object.entries(state.entries).sort((a, b) => b[0].localeCompare(a[0]));
-        
-        if (entries.length === 0) {
-            container.innerHTML = '<div style="padding:1rem;text-align:center;opacity:0.5;">Sin entradas aún</div>';
+    function stopAlarm() {
+        if (alarmAudio) {
+            if (alarmAudio.stop) alarmAudio.stop();
+            else if (alarmAudio.pause) alarmAudio.pause();
+            alarmAudio = null;
+        }
+        alarmOverlay.classList.remove('active');
+        currentAlarmId = null;
+        if (navigator.vibrate) navigator.vibrate(0);
+    }
+
+    // ----- NOTIFICACIONES -----
+    function requestNotificationPermission() {
+        if (!('Notification' in window)) {
+            alert('Este navegador no soporta notificaciones');
             return;
         }
         
-        entries.forEach(([date, entry]) => {
-            const div = document.createElement('div');
-            div.className = 'entry-item';
-            div.innerHTML = `
-                <span class="entry-date">${formatDateDisplay(date)}</span>
-                <span class="entry-preview">${entry.title || 'Sin título'}</span>
-                <span class="entry-tags">${(entry.tags || []).slice(0, 3).join(', ')}</span>
-            `;
-            div.addEventListener('click', () => {
-                state.selectedDate = new Date(date);
-                loadEntryForDate(state.selectedDate);
-                document.getElementById('entriesContainer').style.display = 'none';
-                state.entriesView = false;
-            });
-            container.appendChild(div);
+        Notification.requestPermission().then(perm => {
+            notificationPermission = perm === 'granted';
+            if (notificationPermission) {
+                alert('✅ Notificaciones activadas');
+                showNotification('🔔 AXIOM ALARM', 'Las notificaciones están activas');
+            } else {
+                alert('❌ Permiso denegado. Actívalo desde la configuración del navegador');
+            }
         });
     }
 
-    // ----- TEMA -----
-    function applyTheme() {
-        document.body.classList.remove('dark', 'sepia');
-        if (state.darkMode) document.body.classList.add('dark');
-        if (state.sepiaMode) document.body.classList.add('sepia');
+    function showNotification(title, body) {
+        if (notificationPermission) {
+            try {
+                new Notification(title, {
+                    body: body,
+                    icon: '🔔'
+                });
+            } catch(e) {
+                console.log('Error mostrando notificación', e);
+            }
+        }
+    }
+
+    // ----- RENDERIZADO -----
+    function renderReminders() {
+        remindersList.innerHTML = '';
+        let filtered = reminders;
         
-        document.getElementById('themeToggle').textContent = state.darkMode ? 'Dark Mode' : 'Light Mode';
-    }
-
-    // ----- EXPORTAR -----
-    function exportTxt() {
-        const dateKey = formatDate(state.selectedDate);
-        const entry = state.entries[dateKey];
-        if (!entry) { alert('No hay entrada para esta fecha'); return; }
+        if (filterMode === 'pending') {
+            filtered = filtered.filter(r => !r.completed);
+        } else if (filterMode === 'completed') {
+            filtered = filtered.filter(r => r.completed);
+        }
         
-        const content = `${entry.title}\n\n${entry.content}\n\n---\nFecha: ${formatDateDisplay(dateKey)}\nEstado: ${entry.mood || 'N/A'}\nTags: ${(entry.tags || []).join(', ')}`;
-        downloadFile(content, `axiom_${dateKey}.txt`, 'text/plain');
-    }
-
-    function exportMd() {
-        const dateKey = formatDate(state.selectedDate);
-        const entry = state.entries[dateKey];
-        if (!entry) { alert('No hay entrada para esta fecha'); return; }
+        // Ordenar por fecha
+        filtered.sort((a, b) => a.date - b.date);
         
-        const content = `# ${entry.title}\n\n${entry.content}\n\n---\n*Fecha: ${formatDateDisplay(dateKey)}*\n*Estado: ${entry.mood || 'N/A'}*`;
-        downloadFile(content, `axiom_${dateKey}.md`, 'text/markdown');
+        if (filtered.length === 0) {
+            remindersList.innerHTML = '<div style="padding:2rem;text-align:center;opacity:0.4;">No hay recordatorios</div>';
+            return;
+        }
+        
+        filtered.forEach(reminder => {
+            const div = document.createElement('div');
+            div.className = `reminder-item priority-${reminder.priority}`;
+            if (reminder.completed) div.classList.add('completed');
+            
+            const now = new Date();
+            const isPast = reminder.date < now && !reminder.completed;
+            
+            div.innerHTML = `
+                <div class="reminder-info">
+                    <div class="reminder-title" style="color:${reminder.color || '#2c3e50'}">
+                        ${reminder.title}
+                        ${reminder.repeat !== 'none' ? ' <span class="badge badge-repeating">🔁 ' + (reminder.repeat === 'daily' ? 'Diario' : reminder.repeat === 'weekly' ? 'Semanal' : reminder.repeat === 'monthly' ? 'Mensual' : 'Anual') + '</span>' : ''}
+                        ${isPast && !reminder.completed ? ' <span class="badge" style="background:#e74c3c;color:white;">⏰ PASADO</span>' : ''}
+                    </div>
+                    <div class="reminder-meta">
+                        <span>📅 ${formatDateTime(reminder.date)}</span>
+                        ${reminder.category ? `<span>🏷️ ${reminder.category}</span>` : ''}
+                        ${reminder.message ? `<span>💬 ${reminder.message}</span>` : ''}
+                        <span>🔊 ${reminder.sound === 'custom' ? 'Personalizado' : reminder.sound}</span>
+                    </div>
+                </div>
+                <div class="reminder-actions">
+                    <button class="btn btn-sm ${reminder.completed ? '' : 'btn-primary'}" onclick="toggleComplete('${reminder.id}')">
+                        ${reminder.completed ? '↩️ Reabrir' : '✅ Hecho'}
+                    </button>
+                    ${!reminder.completed ? `<button class="btn btn-sm" onclick="snoozeReminder('${reminder.id}')">⏰ +5 min</button>` : ''}
+                    <button class="btn btn-sm btn-danger" onclick="deleteReminder('${reminder.id}')">🗑️</button>
+                </div>
+            `;
+            remindersList.appendChild(div);
+        });
     }
 
-    function exportJson() {
-        const data = JSON.stringify(state.entries, null, 2);
-        downloadFile(data, 'axiom_backup.json', 'application/json');
+    function updateStats() {
+        const total = reminders.length;
+        const pending = reminders.filter(r => !r.completed).length;
+        const completed = reminders.filter(r => r.completed).length;
+        
+        pendingCount.textContent = pending;
+        completedCount.textContent = completed;
+        totalCount.textContent = total;
     }
 
-    function importJson() {
+    function getPendingReminders() {
+        return reminders.filter(r => !r.completed);
+    }
+
+    // ----- UTILIDADES -----
+    function formatDateTime(date) {
+        if (!date) return '—';
+        const d = new Date(date);
+        return d.toLocaleDateString('es-ES') + ' ' + d.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function formatTime(date) {
+        if (!date) return '—';
+        const d = new Date(date);
+        return d.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function setDefaultDates() {
+        const now = new Date();
+        const date = now.toISOString().split('T')[0];
+        const time = now.toTimeString().slice(0, 5);
+        
+        if (!reminderDate.value) reminderDate.value = date;
+        if (!reminderTime.value) reminderTime.value = time;
+    }
+
+    // ----- EVENTOS -----
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadData();
+        
+        // Permiso de notificaciones al inicio
+        if ('Notification' in window && Notification.permission === 'granted') {
+            notificationPermission = true;
+        }
+    });
+
+    // Guardar
+    document.getElementById('saveReminder').addEventListener('click', saveReminder);
+    
+    // Enter para guardar
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+            document.getElementById('saveReminder').click();
+        }
+    });
+
+    // Tema
+    document.getElementById('themeToggle').addEventListener('click', () => {
+        darkMode = !darkMode;
+        document.body.classList.toggle('dark', darkMode);
+        document.getElementById('themeToggle').textContent = darkMode ? 'Dark Mode' : 'Light Mode';
+        saveData();
+    });
+
+    // Exportar
+    document.getElementById('exportJson').addEventListener('click', () => {
+        const data = JSON.stringify(reminders, null, 2);
+        const blob = new Blob([data], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `axiom_alarm_backup_${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    });
+
+    // Importar
+    document.getElementById('importJson').addEventListener('click', () => {
         const input = document.createElement('input');
         input.type = 'file';
         input.accept = '.json';
@@ -861,13 +1048,16 @@
             reader.onload = (ev) => {
                 try {
                     const data = JSON.parse(ev.target.result);
-                    if (typeof data === 'object' && data !== null) {
-                        state.entries = data;
-                        updateStats();
+                    if (Array.isArray(data)) {
+                        reminders = data.map(r => ({
+                            ...r,
+                            date: new Date(r.date),
+                            createdAt: new Date(r.createdAt)
+                        }));
                         saveData();
-                        renderCalendar();
-                        updateUI();
-                        loadEntryForDate(state.selectedDate);
+                        renderReminders();
+                        updateStats();
+                        checkAlarms();
                         alert('✅ Importado correctamente');
                     }
                 } catch(err) {
@@ -877,313 +1067,101 @@
             reader.readAsText(file);
         };
         input.click();
-    }
+    });
 
-    function exportAllTxt() {
-        let content = '=== AXIOM DIARIO · TODAS LAS ENTRADAS ===\n\n';
-        const entries = Object.entries(state.entries).sort((a, b) => a[0].localeCompare(b[0]));
-        entries.forEach(([date, entry]) => {
-            content += `📅 ${formatDateDisplay(date)}\n`;
-            content += `📝 ${entry.title || 'Sin título'}\n`;
-            content += `${entry.content || ''}\n`;
-            if (entry.mood) content += `😊 ${entry.mood}\n`;
-            if (entry.tags && entry.tags.length) content += `🏷️ ${entry.tags.join(', ')}\n`;
-            content += '\n---\n\n';
-        });
-        downloadFile(content, 'axiom_todas_entradas.txt', 'text/plain');
-    }
+    // Limpiar todo
+    document.getElementById('clearAll').addEventListener('click', () => {
+        if (!confirm('¿Eliminar TODOS los recordatorios? Esta acción no se puede deshacer.')) return;
+        reminders = [];
+        saveData();
+        renderReminders();
+        updateStats();
+        checkAlarms();
+    });
 
-    function exportPdf() {
-        const dateKey = formatDate(state.selectedDate);
-        const entry = state.entries[dateKey];
-        if (!entry) { alert('No hay entrada para esta fecha'); return; }
-        
-        const content = `
-            <html>
-            <head><meta charset="UTF-8"><title>AXIOM DIARIO</title>
-            <style>body{font-family:Georgia,serif;max-width:700px;margin:2rem auto;padding:1rem;line-height:1.8;}
-            h1{font-weight:300;border-bottom:1px solid #ccc;padding-bottom:0.5rem;}
-            .meta{color:#666;font-size:0.9rem;margin:1rem 0;}
-            .content{font-size:1.1rem;}
-</style></head>
-<body>
-    <h1>${entry.title || 'Sin título'}</h1>
-    <div class="meta">
-        ${formatDateDisplay(dateKey)}<br>
-        ${entry.mood ? 'Estado: '+entry.mood : ''}
-        ${entry.tags && entry.tags.length ? ' · Tags: '+entry.tags.join(', ') : ''}
-    </div>
-    <div class="content">${entry.content.replace(/\n/g, '<br>')}</div>
-</body></html>
-`;
+    // Filtros
+    document.getElementById('showAll').addEventListener('click', () => {
+        filterMode = 'all';
+        renderReminders();
+    });
+    
+    document.getElementById('showPending').addEventListener('click', () => {
+        filterMode = 'pending';
+        renderReminders();
+    });
+    
+    document.getElementById('showCompleted').addEventListener('click', () => {
+        filterMode = 'completed';
+        renderReminders();
+    });
 
-const win = window.open('', '_blank');
-win.document.write(content);
-win.document.close();
-setTimeout(() => win.print(), 500);
-}
+    // Repetición personalizada
+    document.getElementById('reminderRepeat').addEventListener('change', function() {
+        customRepeatGroup.style.display = this.value === 'custom' ? 'block' : 'none';
+    });
 
-function downloadFile(content, filename, type) {
-const blob = new Blob([content], { type });
-const url = URL.createObjectURL(blob);
-const a = document.createElement('a');
-a.href = url;
-a.download = filename;
-document.body.appendChild(a);
-a.click();
-document.body.removeChild(a);
-URL.revokeObjectURL(url);
-}
+    // Sonido personalizado
+    document.getElementById('alarmSound').addEventListener('change', function() {
+        customSoundGroup.style.display = this.value === 'custom' ? 'block' : 'none';
+    });
 
-// ----- DESAFÍOS Y EJERCICIOS -----
-function showChallenge() {
-const challenges = [
-'Escribe 3 cosas que te hicieron feliz hoy',
-'Describe tu momento favorito del día',
-'Escribe una carta a tu yo del futuro',
-'¿Qué aprendiste hoy?',
-'Describe un lugar que te gustaría visitar',
-'Escribe sobre una persona que te inspira',
-'¿Qué te gustaría cambiar de tu día?',
-'Escribe 5 metas para la próxima semana',
-'Describe tu comida favorita con todos los detalles',
-'Escribe sobre tu sueño más reciente'
-];
-const challenge = challenges[Math.floor(Math.random() * challenges.length)];
-alert('🎯 Desafío del día:\n\n' + challenge);
-}
+    // Cargar sonido personalizado
+    document.getElementById('customSoundFile').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            customSound = ev.target.result;
+            alert('✅ Sonido personalizado cargado');
+        };
+        reader.readAsDataURL(file);
+    });
 
-function showGratitude() {
-alert('🙏 Ejercicio de gratitud:\n\nEscribe 3 cosas por las que estás agradecido hoy.\n\nTómate un momento para reflexionar.');
-}
+    // Alarma
+    document.getElementById('dismissAlarm').addEventListener('click', stopAlarm);
+    
+    document.getElementById('snoozeAlarm').addEventListener('click', () => {
+        if (currentAlarmId) {
+            snoozeReminder(currentAlarmId);
+        }
+        stopAlarm();
+    });
 
-function showAffirmation() {
-const affirmations = [
-'Eres capaz de lograr todo lo que te propongas',
-'Hoy es un día lleno de posibilidades',
-'Confía en tu proceso, todo llega a su tiempo',
-'Eres fuerte y resiliente',
-'Tienes el poder de crear tu propia realidad',
-'Cada día aprendes y creces un poco más',
-'Mereces todo lo bueno que te está pasando'
-];
-const affirmation = affirmations[Math.floor(Math.random() * affirmations.length)];
-alert('✨ Afirmación positiva:\n\n"' + affirmation + '"');
-}
+    // Probar alarma
+    document.getElementById('testAlarm').addEventListener('click', () => {
+        const testReminder = {
+            id: 'test',
+            title: '🔔 Prueba de alarma',
+            message: '¡Esto es una prueba!',
+            date: new Date(),
+            sound: alarmSound.value,
+            priority: 'high'
+        };
+        triggerAlarm(testReminder);
+        // Auto-cerrar después de 10 segundos
+        setTimeout(() => {
+            if (alarmOverlay.classList.contains('active')) {
+                stopAlarm();
+            }
+        }, 10000);
+    });
 
-// ----- FORMATO DE TEXTO -----
-function wrapText(tag) {
-const content = entryContent;
-const start = content.selectionStart;
-const end = content.selectionEnd;
-const selected = content.value.substring(start, end);
-if (!selected) return;
-const before = content.value.substring(0, start);
-const after = content.value.substring(end);
-content.value = before + tag + selected + tag + after;
-content.selectionStart = start + tag.length;
-content.selectionEnd = end + tag.length;
-saveCurrentEntry();
-}
+    // Permiso de notificaciones
+    document.getElementById('requestPermission').addEventListener('click', requestNotificationPermission);
 
-function insertTag(tag) {
-const content = entryContent;
-const start = content.selectionStart;
-const before = content.value.substring(0, start);
-const after = content.value.substring(start);
-content.value = before + tag + after;
-content.selectionStart = start + tag.length;
-saveCurrentEntry();
-}
+    // Actualizar cada minuto
+    setInterval(() => {
+        checkAlarms();
+        updateStats();
+    }, 60000);
 
-// ----- EVENTOS -----
-document.addEventListener('DOMContentLoaded', () => {
-loadData();
+    console.log('🚀 AXIOM ALARM cargado con éxito');
+    console.log('⏰ ' + reminders.length + ' recordatorios activos');
 
-// Editor
-entryContent.addEventListener('input', () => {
-updateWordCount();
-saveCurrentEntry();
-});
-
-entryTitle.addEventListener('input', saveCurrentEntry);
-
-// Navegación
-document.getElementById('prevDay').addEventListener('click', () => {
-state.selectedDate = new Date(state.selectedDate.getTime() - 86400000);
-loadEntryForDate(state.selectedDate);
-saveData();
-});
-
-document.getElementById('nextDay').addEventListener('click', () => {
-state.selectedDate = new Date(state.selectedDate.getTime() + 86400000);
-loadEntryForDate(state.selectedDate);
-saveData();
-});
-
-document.getElementById('todayBtn').addEventListener('click', () => {
-state.selectedDate = new Date();
-loadEntryForDate(state.selectedDate);
-saveData();
-});
-
-// Tema
-document.getElementById('themeToggle').addEventListener('click', () => {
-state.darkMode = !state.darkMode;
-state.sepiaMode = false;
-applyTheme();
-saveData();
-});
-
-document.getElementById('themeSepia').addEventListener('click', () => {
-state.sepiaMode = !state.sepiaMode;
-if (state.sepiaMode) state.darkMode = false;
-applyTheme();
-saveData();
-});
-
-// Calendario
-document.getElementById('showCalendar').addEventListener('click', () => {
-const container = document.getElementById('calendarContainer');
-container.style.display = container.style.display === 'none' ? 'block' : 'none';
-state.calendarView = !state.calendarView;
-renderCalendar();
-});
-
-document.getElementById('prevMonth').addEventListener('click', () => {
-state.currentMonth--;
-if (state.currentMonth < 0) { state.currentMonth = 11; state.currentYear--; }
-renderCalendar();
-});
-
-document.getElementById('nextMonth').addEventListener('click', () => {
-state.currentMonth++;
-if (state.currentMonth > 11) { state.currentMonth = 0; state.currentYear++; }
-renderCalendar();
-});
-
-// Lista de entradas
-document.getElementById('showEntries').addEventListener('click', () => {
-const container = document.getElementById('entriesContainer');
-container.style.display = container.style.display === 'none' ? 'block' : 'none';
-state.entriesView = !state.entriesView;
-updateEntryList();
-});
-
-// Nueva entrada
-document.getElementById('newEntryBtn').addEventListener('click', () => {
-state.selectedDate = new Date();
-entryTitle.value = '';
-entryContent.value = '';
-moodSelect.value = '';
-tagsInput.value = '';
-locationInput.value = '';
-loadEntryForDate(state.selectedDate);
-saveData();
-});
-
-// Formato
-document.getElementById('boldBtn').addEventListener('click', () => wrapText('**'));
-document.getElementById('italicBtn').addEventListener('click', () => wrapText('*'));
-document.getElementById('underlineBtn').addEventListener('click', () => wrapText('__'));
-document.getElementById('strikeBtn').addEventListener('click', () => wrapText('~~'));
-document.getElementById('h1Btn').addEventListener('click', () => insertTag('# '));
-document.getElementById('h2Btn').addEventListener('click', () => insertTag('## '));
-document.getElementById('quoteBtn').addEventListener('click', () => insertTag('> '));
-document.getElementById('listBtn').addEventListener('click', () => insertTag('- '));
-document.getElementById('listNumBtn').addEventListener('click', () => insertTag('1. '));
-
-document.getElementById('alignLeft').addEventListener('click', () => entryContent.style.textAlign = 'left');
-document.getElementById('alignCenter').addEventListener('click', () => entryContent.style.textAlign = 'center');
-document.getElementById('alignRight').addEventListener('click', () => entryContent.style.textAlign = 'right');
-
-document.getElementById('fontSmall').addEventListener('click', () => {
-state.fontSize = 'small';
-entryContent.style.fontSize = '0.85rem';
-entryTitle.style.fontSize = '1.2rem';
-saveData();
-});
-
-document.getElementById('fontLarge').addEventListener('click', () => {
-state.fontSize = 'large';
-entryContent.style.fontSize = '1.3rem';
-entryTitle.style.fontSize = '1.8rem';
-saveData();
-});
-
-document.getElementById('focusMode').addEventListener('click', () => {
-state.focusMode = !state.focusMode;
-document.querySelector('.editor-wrapper').style.background = state.focusMode ? 'transparent' : 'var(--card)';
-document.querySelector('.editor-wrapper').style.border = state.focusMode ? 'none' : '1px solid var(--border)';
-document.querySelector('.stats-grid').style.display = state.focusMode ? 'none' : 'grid';
-document.querySelector('.header').style.display = state.focusMode ? 'none' : 'flex';
-document.querySelector('.nav-bar').style.display = state.focusMode ? 'none' : 'flex';
-document.querySelector('.btn').style.display = state.focusMode ? 'none' : 'inline-block';
-document.querySelectorAll('.editor-meta').forEach(el => el.style.display = state.focusMode ? 'none' : 'flex');
-});
-
-// Exportar
-document.getElementById('exportTxt').addEventListener('click', exportTxt);
-document.getElementById('exportMd').addEventListener('click', exportMd);
-document.getElementById('exportJson').addEventListener('click', exportJson);
-document.getElementById('importJson').addEventListener('click', importJson);
-document.getElementById('exportPdf').addEventListener('click', exportPdf);
-document.getElementById('exportAllTxt').addEventListener('click', exportAllTxt);
-document.getElementById('printEntry').addEventListener('click', () => window.print());
-
-// Desafíos
-document.getElementById('challengeBtn').addEventListener('click', showChallenge);
-document.getElementById('gratitudeBtn').addEventListener('click', showGratitude);
-document.getElementById('affirmationBtn').addEventListener('click', showAffirmation);
-
-// Entrada aleatoria
-document.getElementById('randomEntryBtn').addEventListener('click', () => {
-const keys = Object.keys(state.entries);
-if (keys.length === 0) { alert('No hay entradas'); return; }
-const randomKey = keys[Math.floor(Math.random() * keys.length)];
-state.selectedDate = new Date(randomKey);
-loadEntryForDate(state.selectedDate);
-saveData();
-});
-
-// Guardado automático cada 30 segundos
-setInterval(() => {
-saveCurrentEntry();
-saveData();
-}, 30000);
-
-// Actualizar estadísticas cada minuto
-setInterval(() => {
-updateStats();
-updateWordCount();
-}, 60000);
-
-// Inicializar
-updateWordCount();
-updateStats();
-updateUI();
-updateEntryList();
-console.log('🚀 AXIOM DIARIO cargado con éxito');
-console.log('📊 ' + Object.keys(state.entries).length + ' entradas');
-});
-
-// ----- CIERRE: FUNCIONES EXTRA (330+) -----
-// Todas las funciones ya están integradas en el código.
-// Incluye: 330+ funciones entre editor, stats, export, import, temas, calendario, listas, desafíos, etc.
-// Algunas funciones extra que no se ven pero están:
-// - Modo foco, modo sepia, modo oscuro
-// - Todas las exportaciones (txt, md, json, pdf)
-// - Estadísticas avanzadas (racha, promedio, totales)
-// - Calendario interactivo con marcación de días
-// - Lista de entradas con preview
-// - Formato de texto avanzado (negrita, cursiva, etc.)
-// - Desafíos diarios, gratitud, afirmaciones
-// - Entrada aleatoria, nueva entrada rápida
-// - Guardado automático, import/export de backup
-// - Y mucho más...
-
-console.log('✨ AXIOM DIARIO · 330+ funciones activas');
-console.log('📖 Todas las funciones integradas en un solo archivo');
+    // Exponer funciones globales para onclick
+    window.toggleComplete = toggleComplete;
+    window.deleteReminder = deleteReminder;
+    window.snoozeReminder = snoozeReminder;
 </script>
 </body>
     </html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AXIOM ALARM · Recordatorios</title>
+    <title>AXIOM WEATHER · Alertas del Tiempo</title>
     <style>
         /* ===== RESET Y ESTILOS BASE ===== */
         * {
@@ -13,18 +13,20 @@
         }
 
         :root {
-            --bg: #f5f3f0;
+            --bg: #f0f4f8;
             --text: #1a1a1a;
-            --border: #e0d8d0;
+            --border: #dce4ec;
             --card: #ffffff;
             --shadow: rgba(0,0,0,0.05);
             --accent: #2c3e50;
-            --radius: 12px;
+            --radius: 16px;
             --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             --transition: 0.3s ease;
-            --high: #e74c3c;
-            --medium: #f39c12;
-            --low: #2ecc71;
+            --sunny: #f39c12;
+            --rain: #3498db;
+            --cloudy: #95a5a6;
+            --snow: #ecf0f1;
+            --storm: #2c3e50;
         }
 
         body {
@@ -46,7 +48,7 @@
         }
 
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
         }
 
@@ -134,30 +136,139 @@
             color: white;
         }
 
-        /* ===== FORMULARIO ===== */
-        .form-card {
+        /* ===== CLIMA ACTUAL ===== */
+        .weather-card {
             background: var(--card);
             border-radius: var(--radius);
             border: 1px solid var(--border);
             padding: 1.5rem;
             margin-bottom: 1.5rem;
+            text-align: center;
             transition: all var(--transition);
         }
 
-        .form-row {
+        .weather-main {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .weather-icon {
+            font-size: 4rem;
+            line-height: 1;
+        }
+
+        .weather-temp {
+            font-size: 3.5rem;
+            font-weight: 300;
+            font-family: 'Georgia', serif;
+        }
+
+        .weather-temp sup {
+            font-size: 1.5rem;
+        }
+
+        .weather-desc {
+            font-size: 1.2rem;
+            opacity: 0.7;
+            text-transform: capitalize;
+            margin-top: 0.2rem;
+        }
+
+        .weather-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 1rem;
+            margin-top: 1.2rem;
+            padding-top: 1.2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .weather-detail {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .weather-detail strong {
+            display: block;
+            font-size: 1.1rem;
+            opacity: 1;
+            font-weight: 600;
+        }
+
+        .weather-location {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            opacity: 0.6;
+        }
+
+        /* ===== PREVISIÓN ===== */
+        .forecast-section {
+            background: var(--card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            padding: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .forecast-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 0.8rem;
+            margin-top: 0.8rem;
+        }
+
+        .forecast-item {
+            text-align: center;
+            padding: 0.5rem;
+            border-radius: 8px;
+            background: var(--bg);
+            transition: all var(--transition);
+        }
+
+        .forecast-item .day {
+            font-size: 0.7rem;
+            opacity: 0.6;
+        }
+
+        .forecast-item .icon {
+            font-size: 1.8rem;
+            margin: 0.2rem 0;
+        }
+
+        .forecast-item .temp {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .forecast-item .temp-min {
+            font-size: 0.7rem;
+            opacity: 0.5;
+        }
+
+        /* ===== ALERTAS ===== */
+        .alerts-section {
+            background: var(--card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            padding: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .alert-form {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 0.8rem;
-            margin-bottom: 0.8rem;
+            margin-top: 0.8rem;
         }
 
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.3rem;
+        .alert-form .full-width {
+            grid-column: 1 / -1;
         }
 
-        .form-group label {
+        .alert-form label {
             font-size: 0.7rem;
             font-weight: 500;
             opacity: 0.6;
@@ -165,9 +276,8 @@
             text-transform: uppercase;
         }
 
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
+        .alert-form input,
+        .alert-form select {
             padding: 0.5rem 0.7rem;
             border: 1px solid var(--border);
             border-radius: 6px;
@@ -176,152 +286,70 @@
             font-family: inherit;
             font-size: 0.9rem;
             outline: none;
-            transition: all var(--transition);
+            width: 100%;
         }
 
-        .form-group input:focus,
-        .form-group select:focus {
+        .alert-form input:focus,
+        .alert-form select:focus {
             border-color: var(--accent);
         }
 
-        .form-group textarea {
-            resize: vertical;
-            min-height: 60px;
-        }
-
-        .form-group input[type="color"] {
-            padding: 0.2rem;
-            height: 38px;
-            cursor: pointer;
-        }
-
-        .form-group input[type="file"] {
-            padding: 0.3rem;
-            font-size: 0.7rem;
-        }
-
-        .form-actions {
+        .alert-form .form-group {
             display: flex;
-            gap: 0.5rem;
-            margin-top: 0.8rem;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 0.3rem;
         }
 
-        .full-width {
-            grid-column: 1 / -1;
-        }
-
-        /* ===== LISTA DE RECORDATORIOS ===== */
-        .reminders-list {
-            background: var(--card);
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-            padding: 1rem;
-            max-height: 500px;
-            overflow-y: auto;
-        }
-
-        .reminder-item {
+        .alert-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.8rem 1rem;
+            padding: 0.6rem 0.8rem;
             border-bottom: 1px solid var(--border);
             gap: 0.5rem;
-            transition: all var(--transition);
-            border-left: 4px solid var(--accent);
+            flex-wrap: wrap;
         }
 
-        .reminder-item:last-child {
+        .alert-item:last-child {
             border-bottom: none;
         }
 
-        .reminder-item .reminder-info {
+        .alert-item .alert-info {
             flex: 1;
         }
 
-        .reminder-item .reminder-title {
+        .alert-item .alert-condition {
             font-weight: 500;
-            font-size: 0.95rem;
         }
 
-        .reminder-item .reminder-meta {
+        .alert-item .alert-meta {
             font-size: 0.7rem;
             opacity: 0.6;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-top: 0.2rem;
         }
 
-        .reminder-item .reminder-meta span {
-            background: var(--border);
-            padding: 0.1rem 0.5rem;
-            border-radius: 12px;
-        }
-
-        .reminder-item .reminder-actions {
+        .alert-item .alert-actions {
             display: flex;
             gap: 0.3rem;
-            flex-wrap: wrap;
         }
 
-        .reminder-item.priority-high {
-            border-left-color: var(--high);
-        }
-
-        .reminder-item.priority-medium {
-            border-left-color: var(--medium);
-        }
-
-        .reminder-item.priority-low {
-            border-left-color: var(--low);
-        }
-
-        .reminder-item.completed {
-            opacity: 0.4;
-            text-decoration: line-through;
-        }
-
-        .reminder-item .badge {
-            font-size: 0.6rem;
+        .alert-item .badge-active {
+            background: #2ecc71;
+            color: white;
             padding: 0.1rem 0.5rem;
             border-radius: 12px;
-            background: var(--border);
-            display: inline-block;
+            font-size: 0.6rem;
         }
 
-        .badge-repeating {
-            background: #3498db !important;
-            color: white !important;
+        .alert-item .badge-inactive {
+            background: #95a5a6;
+            color: white;
+            padding: 0.1rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.6rem;
         }
 
-        /* ===== CONTADOR ===== */
-        .stats-bar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-            padding: 0.8rem 1.2rem;
-            background: var(--card);
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-            margin-bottom: 1rem;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .stats-bar .stat {
-            font-size: 0.8rem;
-            opacity: 0.7;
-        }
-
-        .stats-bar .stat strong {
-            font-size: 1.1rem;
-            opacity: 1;
-        }
-
-        /* ===== NOTIFICACIÓN DE ALARMA ===== */
-        .alarm-overlay {
+        /* ===== NOTIFICACIÓN DE ALERTA ===== */
+        .alert-overlay {
             display: none;
             position: fixed;
             top: 0;
@@ -335,11 +363,11 @@
             animation: fadeIn 0.5s;
         }
 
-        .alarm-overlay.active {
+        .alert-overlay.active {
             display: flex;
         }
 
-        .alarm-box {
+        .alert-box {
             background: var(--card);
             color: var(--text);
             padding: 2.5rem;
@@ -351,21 +379,21 @@
             animation: bounceIn 0.5s;
         }
 
-        .alarm-box h2 {
+        .alert-box .alert-icon {
+            font-size: 4rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .alert-box h2 {
             font-size: 1.8rem;
             margin-bottom: 0.5rem;
             font-family: 'Georgia', serif;
         }
 
-        .alarm-box .alarm-message {
+        .alert-box .alert-message {
             font-size: 1.1rem;
             opacity: 0.7;
             margin: 0.5rem 0 1.5rem;
-        }
-
-        .alarm-box .btn {
-            font-size: 1.2rem;
-            padding: 0.8rem 2rem;
         }
 
         @keyframes fadeIn {
@@ -381,13 +409,13 @@
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 600px) {
-            .form-row {
+            .alert-form {
                 grid-template-columns: 1fr;
             }
             .header { flex-direction: column; align-items: stretch; }
             .header h1 { font-size: 1.4rem; }
-            .reminder-item { flex-wrap: wrap; }
-            .alarm-box { padding: 1.5rem; }
+            .weather-temp { font-size: 2.5rem; }
+            .forecast-grid { grid-template-columns: repeat(4, 1fr); }
         }
 
         /* Scrollbar */
@@ -401,476 +429,573 @@
 <div class="container">
     <!-- HEADER -->
     <header class="header">
-        <h1>AXIOM <span>ALARM</span></h1>
+        <h1>AXIOM <span>WEATHER</span></h1>
         <div class="header-actions">
             <button class="btn btn-sm" id="themeToggle">Light Mode</button>
-            <button class="btn btn-sm" id="exportJson">⬇️ Backup</button>
-            <button class="btn btn-sm" id="importJson">⬆️ Import</button>
-            <button class="btn btn-sm btn-danger" id="clearAll">🗑️ Limpiar todo</button>
+            <button class="btn btn-sm" id="refreshWeather">🔄 Actualizar</button>
+            <button class="btn btn-sm" id="requestPermission">🔔 Notificaciones</button>
+            <button class="btn btn-sm" id="testAlert">🔔 Probar alerta</button>
         </div>
     </header>
 
-    <!-- STATS -->
-    <div class="stats-bar">
-        <span class="stat">⏰ Pendientes: <strong id="pendingCount">0</strong></span>
-        <span class="stat">✅ Completados: <strong id="completedCount">0</strong></span>
-        <span class="stat">📊 Total: <strong id="totalCount">0</strong></span>
-        <span class="stat">🔔 Próximo: <strong id="nextReminder">—</strong></span>
+    <!-- CLIMA ACTUAL -->
+    <div class="weather-card" id="weatherCard">
+        <div class="weather-location" id="weatherLocation">📍 Cargando ubicación...</div>
+        <div class="weather-main">
+            <div class="weather-icon" id="weatherIcon">🌤️</div>
+            <div>
+                <div class="weather-temp" id="weatherTemp">--<sup>°C</sup></div>
+                <div class="weather-desc" id="weatherDesc">Cargando...</div>
+            </div>
+        </div>
+        <div class="weather-details">
+            <div class="weather-detail"><strong id="feelsLike">--</strong>Sensación</div>
+            <div class="weather-detail"><strong id="humidity">--</strong>Humedad</div>
+            <div class="weather-detail"><strong id="wind">--</strong>Viento</div>
+            <div class="weather-detail"><strong id="pressure">--</strong>Presión</div>
+        </div>
     </div>
 
-    <!-- FORMULARIO -->
-    <div class="form-card">
-        <h3 style="font-weight:300; margin-bottom:1rem; font-family:'Georgia',serif;">📝 Nuevo recordatorio</h3>
-        <div class="form-row">
+    <!-- PREVISIÓN 7 DÍAS -->
+    <div class="forecast-section">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
+            <h3 style="font-weight:300; font-family:'Georgia',serif;">📅 Previsión 7 días</h3>
+            <span style="font-size:0.7rem; opacity:0.5;" id="forecastUpdate">Actualizado ahora</span>
+        </div>
+        <div class="forecast-grid" id="forecastGrid">
+            <div style="text-align:center; padding:1rem; opacity:0.5;">Cargando previsión...</div>
+        </div>
+    </div>
+
+    <!-- ALERTAS -->
+    <div class="alerts-section">
+        <h3 style="font-weight:300; font-family:'Georgia',serif; margin-bottom:0.5rem;">🔔 Alertas personalizadas</h3>
+        <p style="font-size:0.8rem; opacity:0.5; margin-bottom:0.8rem;">Recibe una notificación cuando se cumpla la condición</p>
+
+        <div class="alert-form" id="alertForm">
             <div class="form-group">
-                <label>Título *</label>
-                <input type="text" id="reminderTitle" placeholder="Ej: Reunión importante">
-            </div>
-            <div class="form-group">
-                <label>Prioridad</label>
-                <select id="reminderPriority">
-                    <option value="low">Baja</option>
-                    <option value="medium" selected>Media</option>
-                    <option value="high">Alta</option>
+                <label>Condición</label>
+                <select id="alertCondition">
+                    <option value="exact">Temperatura exacta</option>
+                    <option value="min">Temperatura mínima (baja de)</option>
+                    <option value="max">Temperatura máxima (sube de)</option>
+                    <option value="range">Rango de temperatura</option>
+                    <option value="rain">Va a llover</option>
+                    <option value="wind">Viento (km/h)</option>
+                    <option value="humidity">Humedad (%)</option>
                 </select>
             </div>
-        </div>
-        <div class="form-row">
             <div class="form-group">
-                <label>Fecha *</label>
-                <input type="date" id="reminderDate">
+                <label>Valor</label>
+                <input type="number" id="alertValue" placeholder="Ej: 20" step="0.1">
             </div>
-            <div class="form-group">
-                <label>Hora *</label>
-                <input type="time" id="reminderTime">
+            <div class="form-group" id="rangeMaxGroup" style="display:none;">
+                <label>Valor máximo</label>
+                <input type="number" id="alertValueMax" placeholder="Ej: 25" step="0.1">
             </div>
-        </div>
-        <div class="form-row">
             <div class="form-group full-width">
-                <label>Mensaje (opcional)</label>
-                <textarea id="reminderMessage" placeholder="Mensaje adicional..."></textarea>
+                <label>Mensaje personalizado (opcional)</label>
+                <input type="text" id="alertMessage" placeholder="Ej: ¡Lleva paraguas!">
+            </div>
+            <div class="form-group full-width" style="display:flex; flex-direction:row; gap:0.5rem; align-items:center;">
+                <button class="btn btn-primary" id="saveAlert">➕ Guardar alerta</button>
+                <button class="btn" id="clearAlerts">🗑️ Eliminar todas</button>
             </div>
         </div>
-        <div class="form-row">
-            <div class="form-group">
-                <label>Categoría</label>
-                <input type="text" id="reminderCategory" placeholder="Trabajo, Personal, Salud...">
-            </div>
-            <div class="form-group">
-                <label>Color</label>
-                <input type="color" id="reminderColor" value="#2c3e50">
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group">
-                <label>Repetir</label>
-                <select id="reminderRepeat">
-                    <option value="none">No repetir</option>
-                    <option value="daily">Diario</option>
-                    <option value="weekly">Semanal</option>
-                    <option value="monthly">Mensual</option>
-                    <option value="yearly">Anual</option>
-                    <option value="custom">Personalizado (minutos)</option>
-                </select>
-            </div>
-            <div class="form-group" id="customRepeatGroup" style="display:none;">
-                <label>Cada X minutos</label>
-                <input type="number" id="customRepeatMinutes" value="5" min="1" max="1440">
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group">
-                <label>Sonido de alarma</label>
-                <select id="alarmSound">
-                    <option value="default">🔔 Predeterminado</option>
-                    <option value="gentle">🔔 Suave</option>
-                    <option value="urgent">🔔 Urgente</option>
-                    <option value="custom">🎵 Personalizado</option>
-                </select>
-            </div>
-            <div class="form-group" id="customSoundGroup" style="display:none;">
-                <label>Subir audio</label>
-                <input type="file" id="customSoundFile" accept="audio/*">
-            </div>
-        </div>
-        <div class="form-actions">
-            <button class="btn btn-primary" id="saveReminder">➕ Guardar recordatorio</button>
-            <button class="btn" id="testAlarm">🔔 Probar alarma</button>
-            <button class="btn" id="requestPermission">🔔 Activar notificaciones</button>
-        </div>
-    </div>
 
-    <!-- LISTA DE RECORDATORIOS -->
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
-        <h3 style="font-weight:300; font-family:'Georgia',serif;">📋 Recordatorios</h3>
-        <div>
-            <button class="btn btn-sm" id="showAll">Todos</button>
-            <button class="btn btn-sm" id="showPending">Pendientes</button>
-            <button class="btn btn-sm" id="showCompleted">Completados</button>
+        <div style="margin-top: 1rem;">
+            <div id="alertsList">
+                <div style="text-align:center; padding:0.5rem; opacity:0.4; font-size:0.8rem;">No hay alertas configuradas</div>
+            </div>
         </div>
     </div>
-    <div class="reminders-list" id="remindersList"></div>
 </div>
 
-<!-- ALARMA OVERLAY -->
-<div class="alarm-overlay" id="alarmOverlay">
-    <div class="alarm-box">
-        <h2>⏰ ¡Recordatorio!</h2>
-        <div class="alarm-message" id="alarmMessage">Hora de tu recordatorio</div>
-        <div style="margin:0.5rem 0; font-size:0.8rem; opacity:0.5;" id="alarmTime"></div>
-        <button class="btn btn-primary" id="dismissAlarm">✅ Aceptar</button>
-        <button class="btn" id="snoozeAlarm" style="margin-left:0.5rem;">⏰ Posponer 5 min</button>
+<!-- ALERTA OVERLAY -->
+<div class="alert-overlay" id="alertOverlay">
+    <div class="alert-box">
+        <div class="alert-icon" id="alertIcon">🌡️</div>
+        <h2 id="alertTitle">¡Alerta del tiempo!</h2>
+        <div class="alert-message" id="alertMessageDisplay">Se ha cumplido tu condición</div>
+        <div style="margin:0.5rem 0; font-size:0.8rem; opacity:0.5;" id="alertDetails"></div>
+        <button class="btn btn-primary" id="dismissAlert" style="font-size:1.2rem; padding:0.8rem 2rem;">✅ Aceptar</button>
     </div>
 </div>
 
 <script>
     // ============================================================
-    //  AXIOM ALARM · SISTEMA DE RECORDATORIOS CON ALARMA
+    //  AXIOM WEATHER · SISTEMA DE ALERTAS DEL TIEMPO
     //  Versión 1.0 · Todas las funciones
     // ============================================================
 
     // ----- ESTADO -----
-    let reminders = [];
-    let alarmTimeout = null;
-    let alarmInterval = null;
-    let alarmAudio = null;
-    let alarmVibrate = null;
-    let currentAlarmId = null;
-    let filterMode = 'all'; // all, pending, completed
+    let weatherData = null;
+    let forecastData = null;
+    let alerts = [];
     let darkMode = false;
     let notificationPermission = false;
-    let customSound = null;
+    let currentLocation = 'Madrid';
+    let checkInterval = null;
+    let alertCheckInterval = null;
 
-    // ----- DOM ELEMENTOS -----
-    const reminderTitle = document.getElementById('reminderTitle');
-    const reminderDate = document.getElementById('reminderDate');
-    const reminderTime = document.getElementById('reminderTime');
-    const reminderPriority = document.getElementById('reminderPriority');
-    const reminderMessage = document.getElementById('reminderMessage');
-    const reminderCategory = document.getElementById('reminderCategory');
-    const reminderColor = document.getElementById('reminderColor');
-    const reminderRepeat = document.getElementById('reminderRepeat');
-    const customRepeatGroup = document.getElementById('customRepeatGroup');
-    const customRepeatMinutes = document.getElementById('customRepeatMinutes');
-    const alarmSound = document.getElementById('alarmSound');
-    const customSoundGroup = document.getElementById('customSoundGroup');
-    const customSoundFile = document.getElementById('customSoundFile');
-    const remindersList = document.getElementById('remindersList');
-    const pendingCount = document.getElementById('pendingCount');
-    const completedCount = document.getElementById('completedCount');
-    const totalCount = document.getElementById('totalCount');
-    const nextReminder = document.getElementById('nextReminder');
-    const alarmOverlay = document.getElementById('alarmOverlay');
-    const alarmMessage = document.getElementById('alarmMessage');
-    const alarmTime = document.getElementById('alarmTime');
+    // ----- DOM -----
+    const weatherLocation = document.getElementById('weatherLocation');
+    const weatherIcon = document.getElementById('weatherIcon');
+    const weatherTemp = document.getElementById('weatherTemp');
+    const weatherDesc = document.getElementById('weatherDesc');
+    const feelsLike = document.getElementById('feelsLike');
+    const humidity = document.getElementById('humidity');
+    const wind = document.getElementById('wind');
+    const pressure = document.getElementById('pressure');
+    const forecastGrid = document.getElementById('forecastGrid');
+    const alertsList = document.getElementById('alertsList');
+    const alertOverlay = document.getElementById('alertOverlay');
+    const alertTitle = document.getElementById('alertTitle');
+    const alertMessageDisplay = document.getElementById('alertMessageDisplay');
+    const alertDetails = document.getElementById('alertDetails');
+    const alertIcon = document.getElementById('alertIcon');
+
+    // ----- API CONFIG -----
+    const API_KEY = 'bd5e378503939ddaee76f12ad7a97608'; // OpenWeatherMap API key (gratuita)
+    const UNITS = 'metric';
+    const LANG = 'es';
 
     // ----- FUNCIONES PRINCIPALES -----
 
-    // Cargar datos
-    function loadData() {
-        try {
-            const saved = localStorage.getItem('axiom_alarm_reminders');
-            if (saved) {
-                const parsed = JSON.parse(saved);
-                // Convertir fechas string a Date
-                reminders = parsed.map(r => ({
-                    ...r,
-                    date: new Date(r.date),
-                    createdAt: new Date(r.createdAt)
-                }));
-            }
-            
-            const prefs = localStorage.getItem('axiom_alarm_prefs');
-            if (prefs) {
-                const p = JSON.parse(prefs);
-                darkMode = p.darkMode || false;
-                if (darkMode) document.body.classList.add('dark');
-                document.getElementById('themeToggle').textContent = darkMode ? 'Dark Mode' : 'Light Mode';
-            }
-        } catch(e) { console.log('Error cargando', e); }
-        
-        renderReminders();
-        updateStats();
-        checkAlarms();
-        setDefaultDates();
-    }
-
-    // Guardar datos
-    function saveData() {
-        try {
-            localStorage.setItem('axiom_alarm_reminders', JSON.stringify(reminders));
-            localStorage.setItem('axiom_alarm_prefs', JSON.stringify({
-                darkMode: darkMode
-            }));
-        } catch(e) { console.log('Error guardando', e); }
-    }
-
-    // Guardar recordatorio
-    function saveReminder() {
-        const title = reminderTitle.value.trim();
-        const date = reminderDate.value;
-        const time = reminderTime.value;
-        const priority = reminderPriority.value;
-        const message = reminderMessage.value.trim();
-        const category = reminderCategory.value.trim();
-        const color = reminderColor.value;
-        const repeat = reminderRepeat.value;
-        const customMinutes = parseInt(customRepeatMinutes.value) || 5;
-
-        if (!title) { alert('Por favor, escribe un título'); return; }
-        if (!date || !time) { alert('Por favor, selecciona fecha y hora'); return; }
-
-        const reminder = {
-            id: Date.now().toString(36) + Math.random().toString(36).substr(2, 5),
-            title: title,
-            date: new Date(`${date}T${time}`),
-            priority: priority,
-            message: message,
-            category: category,
-            color: color,
-            repeat: repeat,
-            customMinutes: repeat === 'custom' ? customMinutes : null,
-            sound: alarmSound.value,
-            completed: false,
-            createdAt: new Date(),
-            snoozed: false
-        };
-
-        reminders.push(reminder);
-        saveData();
-        renderReminders();
-        updateStats();
-        checkAlarms();
-        
-        // Limpiar formulario
-        reminderTitle.value = '';
-        reminderMessage.value = '';
-        reminderCategory.value = '';
-        setDefaultDates();
-        
-        // Notificación de creación
-        if (notificationPermission) {
-            showNotification('✅ Recordatorio creado', `"${title}" para ${formatDateTime(reminder.date)}`);
-        }
-    }
-
-    // Eliminar recordatorio
-    function deleteReminder(id) {
-        if (!confirm('¿Eliminar este recordatorio?')) return;
-        reminders = reminders.filter(r => r.id !== id);
-        saveData();
-        renderReminders();
-        updateStats();
-        checkAlarms();
-    }
-
-    // Completar/descompletar
-    function toggleComplete(id) {
-        const reminder = reminders.find(r => r.id === id);
-        if (reminder) {
-            reminder.completed = !reminder.completed;
-            if (reminder.completed && reminder.repeat !== 'none') {
-                // Si es recurrente y se completa, programar la siguiente
-                scheduleNext(reminder);
-            }
-            saveData();
-            renderReminders();
-            updateStats();
-            checkAlarms();
-        }
-    }
-
-    // Programar siguiente repetición
-    function scheduleNext(reminder) {
-        const date = new Date(reminder.date);
-        switch(reminder.repeat) {
-            case 'daily':
-                date.setDate(date.getDate() + 1);
-                break;
-            case 'weekly':
-                date.setDate(date.getDate() + 7);
-                break;
-            case 'monthly':
-                date.setMonth(date.getMonth() + 1);
-                break;
-            case 'yearly':
-                date.setFullYear(date.getFullYear() + 1);
-                break;
-            case 'custom':
-                date.setMinutes(date.getMinutes() + (reminder.customMinutes || 5));
-                break;
-            default:
-                return;
-        }
-        
-        const newReminder = {
-            ...reminder,
-            id: Date.now().toString(36) + Math.random().toString(36).substr(2, 5),
-            date: date,
-            completed: false,
-            snoozed: false,
-            createdAt: new Date()
-        };
-        reminders.push(newReminder);
-    }
-
-    // Posponer (snooze)
-    function snoozeReminder(id) {
-        const reminder = reminders.find(r => r.id === id);
-        if (reminder) {
-            const newDate = new Date(reminder.date);
-            newDate.setMinutes(newDate.getMinutes() + 5);
-            reminder.date = newDate;
-            reminder.snoozed = true;
-            saveData();
-            renderReminders();
-            updateStats();
-            checkAlarms();
-            document.getElementById('dismissAlarm').click();
-            showNotification('⏰ Pospuesto 5 minutos', `"${reminder.title}" se reprogramó para las ${formatTime(newDate)}`);
-        }
-    }
-
-    // ----- ALARMA -----
-    function checkAlarms() {
-        const now = new Date();
-        const pending = getPendingReminders();
-        
-        // Buscar el próximo recordatorio
-        const next = pending.sort((a, b) => a.date - b.date)[0];
-        if (next) {
-            nextReminder.textContent = `${next.title} (${formatTime(next.date)})`;
+    // Obtener ubicación
+    function getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    const { latitude, longitude } = pos.coords;
+                    fetchWeather(latitude, longitude);
+                    fetchForecast(latitude, longitude);
+                },
+                (error) => {
+                    console.log('Error de geolocalización, usando Madrid por defecto', error);
+                    fetchWeatherByCity('Madrid');
+                    fetchForecastByCity('Madrid');
+                }
+            );
         } else {
-            nextReminder.textContent = '—';
+            fetchWeatherByCity('Madrid');
+            fetchForecastByCity('Madrid');
         }
+    }
 
-        // Verificar si algún recordatorio debe sonar
-        pending.forEach(reminder => {
-            const diff = reminder.date.getTime() - now.getTime();
-            if (diff <= 3000 && diff > -10000) { // 3 segundos antes o 10 después
-                triggerAlarm(reminder);
+    // Fetch clima actual
+    function fetchWeather(lat, lon) {
+        const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=${UNITS}&lang=${LANG}&appid=${API_KEY}`;
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                if (data.cod === 200) {
+                    weatherData = data;
+                    updateWeatherUI(data);
+                    checkAlerts(data);
+                    saveData();
+                } else {
+                    console.error('Error API:', data);
+                }
+            })
+            .catch(err => console.error('Error fetching weather:', err));
+    }
+
+    function fetchWeatherByCity(city) {
+        const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=${UNITS}&lang=${LANG}&appid=${API_KEY}`;
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                if (data.cod === 200) {
+                    weatherData = data;
+                    updateWeatherUI(data);
+                    checkAlerts(data);
+                    saveData();
+                } else {
+                    console.error('Error API:', data);
+                }
+            })
+            .catch(err => console.error('Error fetching weather:', err));
+    }
+
+    // Fetch previsión
+    function fetchForecast(lat, lon) {
+        const url = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=${UNITS}&lang=${LANG}&appid=${API_KEY}`;
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                if (data.cod === '200') {
+                    forecastData = data;
+                    updateForecastUI(data);
+                    saveData();
+                }
+            })
+            .catch(err => console.error('Error fetching forecast:', err));
+    }
+
+    function fetchForecastByCity(city) {
+        const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=${UNITS}&lang=${LANG}&appid=${API_KEY}`;
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                if (data.cod === '200') {
+                    forecastData = data;
+                    updateForecastUI(data);
+                    saveData();
+                }
+            })
+            .catch(err => console.error('Error fetching forecast:', err));
+    }
+
+    // ----- UPDATE UI -----
+    function updateWeatherUI(data) {
+        const temp = Math.round(data.main.temp);
+        const feels = Math.round(data.main.feels_like);
+        const humid = data.main.humidity;
+        const windSpeed = Math.round(data.wind.speed * 3.6); // m/s a km/h
+        const press = data.main.pressure;
+        const desc = data.weather[0].description;
+        const icon = getWeatherIcon(data.weather[0].icon, data.weather[0].main);
+        const city = data.name;
+
+        weatherLocation.textContent = `📍 ${city}, ${data.sys.country}`;
+        weatherIcon.textContent = icon;
+        weatherTemp.innerHTML = `${temp}<sup>°C</sup>`;
+        weatherDesc.textContent = desc;
+        feelsLike.textContent = `${feels}°C`;
+        humidity.textContent = `${humid}%`;
+        wind.textContent = `${windSpeed} km/h`;
+        pressure.textContent = `${press} hPa`;
+
+        currentLocation = city;
+        document.getElementById('forecastUpdate').textContent = `Actualizado ${new Date().toLocaleTimeString()}`;
+    }
+
+    function updateForecastUI(data) {
+        const list = data.list;
+        const daily = [];
+        const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+
+        // Agrupar por día
+        const grouped = {};
+        list.forEach(item => {
+            const date = new Date(item.dt * 1000);
+            const key = date.toDateString();
+            if (!grouped[key]) {
+                grouped[key] = {
+                    date: date,
+                    tempMax: item.main.temp_max,
+                    tempMin: item.main.temp_min,
+                    icon: item.weather[0].icon,
+                    main: item.weather[0].main
+                };
+            } else {
+                grouped[key].tempMax = Math.max(grouped[key].tempMax, item.main.temp_max);
+                grouped[key].tempMin = Math.min(grouped[key].tempMin, item.main.temp_min);
             }
         });
 
-        // Programar siguiente verificación
-        if (alarmTimeout) clearTimeout(alarmTimeout);
-        alarmTimeout = setTimeout(checkAlarms, 5000);
+        const keys = Object.keys(grouped);
+        forecastGrid.innerHTML = '';
+        keys.slice(0, 7).forEach(key => {
+            const day = grouped[key];
+            const icon = getWeatherIcon(day.icon, day.main);
+            const dayName = day.date.getDay();
+            const dayLabel = dayName === new Date().getDay() ? 'Hoy' : days[dayName];
+
+            const div = document.createElement('div');
+            div.className = 'forecast-item';
+            div.innerHTML = `
+                <div class="day">${dayLabel}</div>
+                <div class="icon">${icon}</div>
+                <div class="temp">${Math.round(day.tempMax)}°</div>
+                <div class="temp-min">${Math.round(day.tempMin)}°</div>
+            `;
+            forecastGrid.appendChild(div);
+        });
     }
 
-    function triggerAlarm(reminder) {
-        if (currentAlarmId === reminder.id) return; // Ya está sonando
-        currentAlarmId = reminder.id;
-        
-        // Mostrar overlay
-        alarmMessage.textContent = reminder.message || `¡Hora de "${reminder.title}"!`;
-        alarmTime.textContent = formatDateTime(reminder.date);
-        alarmOverlay.classList.add('active');
-        
+    // ----- ICONOS -----
+    function getWeatherIcon(icon, main) {
+        const icons = {
+            '01d': '☀️',
+            '01n': '🌙',
+            '02d': '⛅',
+            '02n': '☁️',
+            '03d': '☁️',
+            '03n': '☁️',
+            '04d': '☁️',
+            '04n': '☁️',
+            '09d': '🌧️',
+            '09n': '🌧️',
+            '10d': '🌦️',
+            '10n': '🌧️',
+            '11d': '⛈️',
+            '11n': '⛈️',
+            '13d': '❄️',
+            '13n': '❄️',
+            '50d': '🌫️',
+            '50n': '🌫️'
+        };
+        return icons[icon] || '🌤️';
+    }
+
+    // ----- ALERTAS -----
+    function checkAlerts(weather) {
+        if (!weather || !alerts.length) return;
+        const temp = weather.main.temp;
+        const humidityVal = weather.main.humidity;
+        const windVal = Math.round(weather.wind.speed * 3.6);
+        const mainCondition = weather.weather[0].main.toLowerCase();
+        const willRain = mainCondition.includes('rain') || mainCondition.includes('drizzle');
+
+        alerts.forEach(alert => {
+            if (!alert.active) return;
+            let triggered = false;
+            let triggerMessage = '';
+
+            switch(alert.condition) {
+                case 'exact':
+                    if (Math.round(temp) === Math.round(alert.value)) {
+                        triggered = true;
+                        triggerMessage = `¡La temperatura es de ${Math.round(temp)}°C!`;
+                    }
+                    break;
+                case 'min':
+                    if (temp < alert.value) {
+                        triggered = true;
+                        triggerMessage = `¡La temperatura ha bajado de ${alert.value}°C (${Math.round(temp)}°C)!`;
+                    }
+                    break;
+                case 'max':
+                    if (temp > alert.value) {
+                        triggered = true;
+                        triggerMessage = `¡La temperatura ha subido de ${alert.value}°C (${Math.round(temp)}°C)!`;
+                    }
+                    break;
+                case 'range':
+                    if (temp >= alert.value && temp <= alert.valueMax) {
+                        triggered = true;
+                        triggerMessage = `¡La temperatura está entre ${alert.value}°C y ${alert.valueMax}°C (${Math.round(temp)}°C)!`;
+                    }
+                    break;
+                case 'rain':
+                    if (willRain) {
+                        triggered = true;
+                        triggerMessage = '¡Va a llover! Lleva paraguas ☔';
+                    }
+                    break;
+                case 'wind':
+                    if (windVal > alert.value) {
+                        triggered = true;
+                        triggerMessage = `¡El viento ha superado ${alert.value} km/h (${windVal} km/h)!`;
+                    }
+                    break;
+                case 'humidity':
+                    if (humidityVal > alert.value) {
+                        triggered = true;
+                        triggerMessage = `¡La humedad ha superado ${alert.value}% (${humidityVal}%)!`;
+                    }
+                    break;
+            }
+
+            if (triggered) {
+                triggerAlert(alert, triggerMessage, weather);
+                // Desactivar alerta temporalmente para evitar spam
+                alert.active = false;
+                setTimeout(() => {
+                    alert.active = true;
+                    saveData();
+                    renderAlerts();
+                }, 60000); // Reactivar después de 1 minuto
+                saveData();
+                renderAlerts();
+            }
+        });
+    }
+
+    function triggerAlert(alert, message, weather) {
         // Sonido
-        playAlarmSound(reminder.sound);
-        
+        playAlertSound();
+
         // Vibración
         if (navigator.vibrate) {
             navigator.vibrate([500, 200, 500, 200, 1000]);
         }
-        
+
         // Notificación del sistema
         if (notificationPermission) {
-            showNotification('⏰ ¡Recordatorio!', `${reminder.title} - ${reminder.message || 'Es hora'}`);
+            showNotification('🌡️ ¡Alerta del tiempo!', `${alert.message || message}`);
         }
-        
-        // Marcar como completado si no es recurrente
-        if (reminder.repeat === 'none') {
-            reminder.completed = true;
-            saveData();
-            renderReminders();
-            updateStats();
-        } else {
-            // Para recurrentes, programar siguiente y marcar actual como completado
-            reminder.completed = true;
-            scheduleNext(reminder);
-            saveData();
-            renderReminders();
-            updateStats();
+
+        // Overlay
+        alertIcon.textContent = '🌡️';
+        alertTitle.textContent = '¡Alerta del tiempo!';
+        alertMessageDisplay.textContent = alert.message || message;
+        alertDetails.textContent = `📍 ${weather.name} · ${Math.round(weather.main.temp)}°C · ${weather.weather[0].description}`;
+        alertOverlay.classList.add('active');
+
+        // Auto-cerrar después de 30 segundos
+        setTimeout(() => {
+            if (alertOverlay.classList.contains('active')) {
+                dismissAlert();
+            }
+        }, 30000);
+    }
+
+    function dismissAlert() {
+        alertOverlay.classList.remove('active');
+        // Detener sonido
+        if (alertAudio) {
+            alertAudio.pause();
+            alertAudio = null;
         }
     }
 
-    function playAlarmSound(soundType) {
+    let alertAudio = null;
+
+    function playAlertSound() {
         try {
-            if (alarmAudio) {
-                alarmAudio.pause();
-                alarmAudio = null;
+            if (alertAudio) {
+                alertAudio.pause();
+                alertAudio = null;
             }
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = ctx.createOscillator();
+            const gain = ctx.createGain();
+            oscillator.connect(gain);
+            gain.connect(ctx.destination);
+            oscillator.frequency.value = 880;
+            oscillator.type = 'square';
+            gain.gain.value = 0.2;
+            oscillator.start();
             
-            let audioUrl = null;
-            
-            if (soundType === 'custom' && customSound) {
-                audioUrl = customSound;
-            } else {
-                // Generar tono según tipo
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const oscillator = ctx.createOscillator();
-                const gain = ctx.createGain();
-                oscillator.connect(gain);
-                gain.connect(ctx.destination);
-                
-                let frequency = 880;
-                let type = 'sine';
-                
-                if (soundType === 'urgent') {
-                    frequency = 1000;
-                    type = 'square';
-                } else if (soundType === 'gentle') {
-                    frequency = 440;
-                    type = 'sine';
-                } else {
-                    // default: alternar tonos
-                    frequency = 880;
-                    type = 'sine';
+            let count = 0;
+            const interval = setInterval(() => {
+                if (count >= 5) {
+                    clearInterval(interval);
+                    oscillator.stop();
+                    return;
                 }
-                
-                oscillator.frequency.value = frequency;
-                oscillator.type = type;
-                gain.gain.value = 0.3;
-                oscillator.start();
-                
-                // Hacer sonar 3 veces
-                let count = 0;
-                const interval = setInterval(() => {
-                    if (count >= 3) {
-                        clearInterval(interval);
-                        oscillator.stop();
-                        return;
-                    }
-                    oscillator.frequency.value = count % 2 === 0 ? frequency : frequency * 0.8;
-                    count++;
-                }, 300);
-                
-                // Guardar referencia para detener
-                alarmAudio = { stop: () => { clearInterval(interval); oscillator.stop(); } };
-                return;
-            }
+                oscillator.frequency.value = count % 2 === 0 ? 880 : 660;
+                count++;
+            }, 300);
             
-            if (audioUrl) {
-                alarmAudio = new Audio(audioUrl);
-                alarmAudio.loop = true;
-                alarmAudio.volume = 0.7;
-                alarmAudio.play().catch(e => console.log('Error reproduciendo audio', e));
-            }
+            alertAudio = { stop: () => { clearInterval(interval); oscillator.stop(); } };
         } catch(e) {
             console.log('Error con el sonido', e);
         }
     }
 
-    function stopAlarm() {
-        if (alarmAudio) {
-            if (alarmAudio.stop) alarmAudio.stop();
-            else if (alarmAudio.pause) alarmAudio.pause();
-            alarmAudio = null;
+    // ----- GUARDAR ALERTAS -----
+    function saveAlert() {
+        const condition = document.getElementById('alertCondition').value;
+        const value = parseFloat(document.getElementById('alertValue').value);
+        const valueMax = parseFloat(document.getElementById('alertValueMax').value);
+        const message = document.getElementById('alertMessage').value.trim();
+
+        if (isNaN(value) && condition !== 'rain') {
+            alert('Por favor, introduce un valor válido');
+            return;
         }
-        alarmOverlay.classList.remove('active');
-        currentAlarmId = null;
-        if (navigator.vibrate) navigator.vibrate(0);
+
+        if (condition === 'range' && (isNaN(value) || isNaN(valueMax) || value > valueMax)) {
+            alert('Por favor, introduce un rango válido (mínimo < máximo)');
+            return;
+        }
+
+        const alert = {
+            id: Date.now().toString(36) + Math.random().toString(36).substr(2, 5),
+            condition: condition,
+            value: value,
+            valueMax: condition === 'range' ? valueMax : null,
+            message: message || getDefaultMessage(condition, value, valueMax),
+            active: true,
+            createdAt: new Date()
+        };
+
+        alerts.push(alert);
+        saveData();
+        renderAlerts();
+        document.getElementById('alertValue').value = '';
+        document.getElementById('alertValueMax').value = '';
+        document.getElementById('alertMessage').value = '';
+
+        if (notificationPermission) {
+            showNotification('✅ Alerta guardada', `Te avisaré cuando: ${alert.message}`);
+        }
+    }
+
+    function getDefaultMessage(condition, value, valueMax) {
+        const messages = {
+            exact: `Haga ${value}°C`,
+            min: `Baje de ${value}°C`,
+            max: `Suba de ${value}°C`,
+            range: `Esté entre ${value}°C y ${valueMax}°C`,
+            rain: 'Vaya a llover',
+            wind: `El viento supere ${value} km/h`,
+            humidity: `La humedad supere ${value}%`
+        };
+        return messages[condition] || 'Condición del tiempo';
+    }
+
+    function deleteAlert(id) {
+        alerts = alerts.filter(a => a.id !== id);
+        saveData();
+        renderAlerts();
+    }
+
+    function toggleAlert(id) {
+        const alert = alerts.find(a => a.id === id);
+        if (alert) {
+            alert.active = !alert.active;
+            saveData();
+            renderAlerts();
+        }
+    }
+
+    function clearAlerts() {
+        if (!confirm('¿Eliminar todas las alertas?')) return;
+        alerts = [];
+        saveData();
+        renderAlerts();
+    }
+
+    // ----- RENDER ALERTS -----
+    function renderAlerts() {
+        if (alerts.length === 0) {
+            alertsList.innerHTML = '<div style="text-align:center; padding:0.5rem; opacity:0.4; font-size:0.8rem;">No hay alertas configuradas</div>';
+            return;
+        }
+
+        alertsList.innerHTML = '';
+        alerts.forEach(alert => {
+            const div = document.createElement('div');
+            div.className = 'alert-item';
+            
+            const conditionLabels = {
+                exact: `Temperatura exacta ${alert.value}°C`,
+                min: `Temperatura mínima ${alert.value}°C`,
+                max: `Temperatura máxima ${alert.value}°C`,
+                range: `Rango ${alert.value}°C - ${alert.valueMax}°C`,
+                rain: 'Lluvia',
+                wind: `Viento > ${alert.value} km/h`,
+                humidity: `Humedad > ${alert.value}%`
+            };
+
+            div.innerHTML = `
+                <div class="alert-info">
+                    <div class="alert-condition">${conditionLabels[alert.condition] || alert.condition}</div>
+                    <div class="alert-meta">${alert.message || ''} · ${new Date(alert.createdAt).toLocaleDateString()}</div>
+                </div>
+                <div class="alert-actions">
+                    <span class="${alert.active ? 'badge-active' : 'badge-inactive'}">${alert.active ? 'Activa' : 'Inactiva'}</span>
+                    <button class="btn btn-sm" onclick="toggleAlert('${alert.id}')">${alert.active ? '⏸️' : '▶️'}</button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteAlert('${alert.id}')">🗑️</button>
+                </div>
+            `;
+            alertsList.appendChild(div);
+        });
     }
 
     // ----- NOTIFICACIONES -----
@@ -884,9 +1009,9 @@
             notificationPermission = perm === 'granted';
             if (notificationPermission) {
                 alert('✅ Notificaciones activadas');
-                showNotification('🔔 AXIOM ALARM', 'Las notificaciones están activas');
+                showNotification('🔔 AXIOM WEATHER', 'Las alertas funcionarán correctamente');
             } else {
-                alert('❌ Permiso denegado. Actívalo desde la configuración del navegador');
+                alert('❌ Permiso denegado. Actívalo desde la configuración');
             }
         });
     }
@@ -896,7 +1021,7 @@
             try {
                 new Notification(title, {
                     body: body,
-                    icon: '🔔'
+                    icon: '🌡️'
                 });
             } catch(e) {
                 console.log('Error mostrando notificación', e);
@@ -904,114 +1029,100 @@
         }
     }
 
-    // ----- RENDERIZADO -----
-    function renderReminders() {
-        remindersList.innerHTML = '';
-        let filtered = reminders;
-        
-        if (filterMode === 'pending') {
-            filtered = filtered.filter(r => !r.completed);
-        } else if (filterMode === 'completed') {
-            filtered = filtered.filter(r => r.completed);
-        }
-        
-        // Ordenar por fecha
-        filtered.sort((a, b) => a.date - b.date);
-        
-        if (filtered.length === 0) {
-            remindersList.innerHTML = '<div style="padding:2rem;text-align:center;opacity:0.4;">No hay recordatorios</div>';
-            return;
-        }
-        
-        filtered.forEach(reminder => {
-            const div = document.createElement('div');
-            div.className = `reminder-item priority-${reminder.priority}`;
-            if (reminder.completed) div.classList.add('completed');
+    // ----- ALMACENAMIENTO -----
+    function saveData() {
+        try {
+            localStorage.setItem('axiom_weather_alerts', JSON.stringify(alerts));
+            localStorage.setItem('axiom_weather_prefs', JSON.stringify({
+                darkMode: darkMode,
+                location: currentLocation
+            }));
+        } catch(e) { console.log('Error guardando', e); }
+    }
+
+    function loadData() {
+        try {
+            const savedAlerts = localStorage.getItem('axiom_weather_alerts');
+            if (savedAlerts) {
+                alerts = JSON.parse(savedAlerts);
+            }
             
-            const now = new Date();
-            const isPast = reminder.date < now && !reminder.completed;
-            
-            div.innerHTML = `
-                <div class="reminder-info">
-                    <div class="reminder-title" style="color:${reminder.color || '#2c3e50'}">
-                        ${reminder.title}
-                        ${reminder.repeat !== 'none' ? ' <span class="badge badge-repeating">🔁 ' + (reminder.repeat === 'daily' ? 'Diario' : reminder.repeat === 'weekly' ? 'Semanal' : reminder.repeat === 'monthly' ? 'Mensual' : 'Anual') + '</span>' : ''}
-                        ${isPast && !reminder.completed ? ' <span class="badge" style="background:#e74c3c;color:white;">⏰ PASADO</span>' : ''}
-                    </div>
-                    <div class="reminder-meta">
-                        <span>📅 ${formatDateTime(reminder.date)}</span>
-                        ${reminder.category ? `<span>🏷️ ${reminder.category}</span>` : ''}
-                        ${reminder.message ? `<span>💬 ${reminder.message}</span>` : ''}
-                        <span>🔊 ${reminder.sound === 'custom' ? 'Personalizado' : reminder.sound}</span>
-                    </div>
-                </div>
-                <div class="reminder-actions">
-                    <button class="btn btn-sm ${reminder.completed ? '' : 'btn-primary'}" onclick="toggleComplete('${reminder.id}')">
-                        ${reminder.completed ? '↩️ Reabrir' : '✅ Hecho'}
-                    </button>
-                    ${!reminder.completed ? `<button class="btn btn-sm" onclick="snoozeReminder('${reminder.id}')">⏰ +5 min</button>` : ''}
-                    <button class="btn btn-sm btn-danger" onclick="deleteReminder('${reminder.id}')">🗑️</button>
-                </div>
-            `;
-            remindersList.appendChild(div);
-        });
+            const prefs = localStorage.getItem('axiom_weather_prefs');
+            if (prefs) {
+                const p = JSON.parse(prefs);
+                darkMode = p.darkMode || false;
+                if (darkMode) document.body.classList.add('dark');
+                document.getElementById('themeToggle').textContent = darkMode ? 'Dark Mode' : 'Light Mode';
+            }
+        } catch(e) { console.log('Error cargando', e); }
+        renderAlerts();
     }
 
-    function updateStats() {
-        const total = reminders.length;
-        const pending = reminders.filter(r => !r.completed).length;
-        const completed = reminders.filter(r => r.completed).length;
+    // ----- TEST -----
+    function testAlert() {
+        const testWeather = {
+            main: {
+                temp: 20,
+                feels_like: 18,
+                humidity: 65,
+                pressure: 1015
+            },
+            wind: {
+                speed: 5.5
+            },
+            weather: [{
+                main: 'Clear',
+                description: 'cielo claro'
+            }],
+            name: 'Madrid',
+            sys: { country: 'ES' }
+        };
         
-        pendingCount.textContent = pending;
-        completedCount.textContent = completed;
-        totalCount.textContent = total;
-    }
-
-    function getPendingReminders() {
-        return reminders.filter(r => !r.completed);
-    }
-
-    // ----- UTILIDADES -----
-    function formatDateTime(date) {
-        if (!date) return '—';
-        const d = new Date(date);
-        return d.toLocaleDateString('es-ES') + ' ' + d.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
-    }
-
-    function formatTime(date) {
-        if (!date) return '—';
-        const d = new Date(date);
-        return d.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
-    }
-
-    function setDefaultDates() {
-        const now = new Date();
-        const date = now.toISOString().split('T')[0];
-        const time = now.toTimeString().slice(0, 5);
+        const testAlertData = {
+            id: 'test',
+            condition: 'exact',
+            value: 20,
+            message: '🧪 ¡Esto es una prueba de alerta!',
+            active: true
+        };
         
-        if (!reminderDate.value) reminderDate.value = date;
-        if (!reminderTime.value) reminderTime.value = time;
+        triggerAlert(testAlertData, '🧪 Alerta de prueba activada', testWeather);
+        
+        // Auto-cerrar después de 8 segundos
+        setTimeout(() => {
+            if (alertOverlay.classList.contains('active')) {
+                dismissAlert();
+            }
+        }, 8000);
     }
 
     // ----- EVENTOS -----
 
     document.addEventListener('DOMContentLoaded', () => {
         loadData();
+        getLocation();
         
         // Permiso de notificaciones al inicio
         if ('Notification' in window && Notification.permission === 'granted') {
             notificationPermission = true;
         }
+
+        // Verificar alertas cada 2 minutos
+        alertCheckInterval = setInterval(() => {
+            if (weatherData) {
+                checkAlerts(weatherData);
+            }
+        }, 120000);
     });
 
-    // Guardar
-    document.getElementById('saveReminder').addEventListener('click', saveReminder);
-    
-    // Enter para guardar
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
-            document.getElementById('saveReminder').click();
-        }
+    // Guardar alerta
+    document.getElementById('saveAlert').addEventListener('click', saveAlert);
+
+    // Condición de rango
+    document.getElementById('alertCondition').addEventListener('change', function() {
+        const rangeGroup = document.getElementById('rangeMaxGroup');
+        rangeGroup.style.display = this.value === 'range' ? 'block' : 'none';
+        document.getElementById('alertValue').placeholder = this.value === 'rain' ? '' : this.value === 'range' ? 'Mínimo' : 'Valor';
     });
 
     // Tema
@@ -1022,146 +1133,37 @@
         saveData();
     });
 
-    // Exportar
-    document.getElementById('exportJson').addEventListener('click', () => {
-        const data = JSON.stringify(reminders, null, 2);
-        const blob = new Blob([data], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `axiom_alarm_backup_${new Date().toISOString().split('T')[0]}.json`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+    // Actualizar clima
+    document.getElementById('refreshWeather').addEventListener('click', () => {
+        getLocation();
     });
 
-    // Importar
-    document.getElementById('importJson').addEventListener('click', () => {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = '.json';
-        input.onchange = (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (ev) => {
-                try {
-                    const data = JSON.parse(ev.target.result);
-                    if (Array.isArray(data)) {
-                        reminders = data.map(r => ({
-                            ...r,
-                            date: new Date(r.date),
-                            createdAt: new Date(r.createdAt)
-                        }));
-                        saveData();
-                        renderReminders();
-                        updateStats();
-                        checkAlarms();
-                        alert('✅ Importado correctamente');
-                    }
-                } catch(err) {
-                    alert('❌ Error al importar');
-                }
-            };
-            reader.readAsText(file);
-        };
-        input.click();
-    });
-
-    // Limpiar todo
-    document.getElementById('clearAll').addEventListener('click', () => {
-        if (!confirm('¿Eliminar TODOS los recordatorios? Esta acción no se puede deshacer.')) return;
-        reminders = [];
-        saveData();
-        renderReminders();
-        updateStats();
-        checkAlarms();
-    });
-
-    // Filtros
-    document.getElementById('showAll').addEventListener('click', () => {
-        filterMode = 'all';
-        renderReminders();
-    });
-    
-    document.getElementById('showPending').addEventListener('click', () => {
-        filterMode = 'pending';
-        renderReminders();
-    });
-    
-    document.getElementById('showCompleted').addEventListener('click', () => {
-        filterMode = 'completed';
-        renderReminders();
-    });
-
-    // Repetición personalizada
-    document.getElementById('reminderRepeat').addEventListener('change', function() {
-        customRepeatGroup.style.display = this.value === 'custom' ? 'block' : 'none';
-    });
-
-    // Sonido personalizado
-    document.getElementById('alarmSound').addEventListener('change', function() {
-        customSoundGroup.style.display = this.value === 'custom' ? 'block' : 'none';
-    });
-
-    // Cargar sonido personalizado
-    document.getElementById('customSoundFile').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-            customSound = ev.target.result;
-            alert('✅ Sonido personalizado cargado');
-        };
-        reader.readAsDataURL(file);
-    });
-
-    // Alarma
-    document.getElementById('dismissAlarm').addEventListener('click', stopAlarm);
-    
-    document.getElementById('snoozeAlarm').addEventListener('click', () => {
-        if (currentAlarmId) {
-            snoozeReminder(currentAlarmId);
-        }
-        stopAlarm();
-    });
-
-    // Probar alarma
-    document.getElementById('testAlarm').addEventListener('click', () => {
-        const testReminder = {
-            id: 'test',
-            title: '🔔 Prueba de alarma',
-            message: '¡Esto es una prueba!',
-            date: new Date(),
-            sound: alarmSound.value,
-            priority: 'high'
-        };
-        triggerAlarm(testReminder);
-        // Auto-cerrar después de 10 segundos
-        setTimeout(() => {
-            if (alarmOverlay.classList.contains('active')) {
-                stopAlarm();
-            }
-        }, 10000);
-    });
-
-    // Permiso de notificaciones
+    // Notificaciones
     document.getElementById('requestPermission').addEventListener('click', requestNotificationPermission);
 
-    // Actualizar cada minuto
-    setInterval(() => {
-        checkAlarms();
-        updateStats();
-    }, 60000);
+    // Test alerta
+    document.getElementById('testAlert').addEventListener('click', testAlert);
 
-    console.log('🚀 AXIOM ALARM cargado con éxito');
-    console.log('⏰ ' + reminders.length + ' recordatorios activos');
+    // Limpiar alertas
+    document.getElementById('clearAlerts').addEventListener('click', clearAlerts);
 
-    // Exponer funciones globales para onclick
-    window.toggleComplete = toggleComplete;
-    window.deleteReminder = deleteReminder;
-    window.snoozeReminder = snoozeReminder;
+    // Dismiss alerta
+    document.getElementById('dismissAlert').addEventListener('click', dismissAlert);
+
+    // Enter para guardar
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && e.target.closest('.alert-form')) {
+            document.getElementById('saveAlert').click();
+        }
+    });
+
+    // Exponer funciones globales
+    window.deleteAlert = deleteAlert;
+    window.toggleAlert = toggleAlert;
+    window.dismissAlert = dismissAlert;
+
+    console.log('🌤️ AXIOM WEATHER cargado con éxito');
+    console.log('🔔 ' + alerts.length + ' alertas activas');
 </script>
 </body>
-    </html>
+</html>

@@ -3,1167 +3,359 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AXIOM WEATHER · Alertas del Tiempo</title>
+    <title>❤️ Para Raúl</title>
     <style>
-        /* ===== RESET Y ESTILOS BASE ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        :root {
-            --bg: #f0f4f8;
-            --text: #1a1a1a;
-            --border: #dce4ec;
-            --card: #ffffff;
-            --shadow: rgba(0,0,0,0.05);
-            --accent: #2c3e50;
-            --radius: 16px;
-            --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            --transition: 0.3s ease;
-            --sunny: #f39c12;
-            --rain: #3498db;
-            --cloudy: #95a5a6;
-            --snow: #ecf0f1;
-            --storm: #2c3e50;
-        }
-
         body {
-            font-family: var(--font);
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            padding: 1rem;
-            transition: all var(--transition);
-        }
-
-        body.dark {
-            --bg: #0a0a0a;
-            --text: #e8e8e8;
-            --border: #2a2a2a;
-            --card: #141414;
-            --shadow: rgba(0,0,0,0.3);
-            --accent: #8a9baa;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        /* ===== HEADER ===== */
-        .header {
+            background: #0a0a0a;
+            overflow: hidden;
+            height: 100vh;
+            font-family: 'Georgia', 'Segoe UI', serif;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-            padding: 1.2rem 1.5rem;
-            background: var(--card);
-            border-radius: var(--radius);
-            box-shadow: 0 2px 12px var(--shadow);
-            margin-bottom: 1.5rem;
-            border: 1px solid var(--border);
-        }
-
-        .header h1 {
-            font-size: 1.8rem;
-            font-weight: 300;
-            letter-spacing: 2px;
-            font-family: 'Georgia', serif;
-        }
-
-        .header h1 span {
-            font-weight: 700;
-            color: var(--accent);
-        }
-
-        .header-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.4rem;
-        }
-
-        .btn {
-            padding: 0.4rem 0.9rem;
-            font-size: 0.7rem;
-            font-weight: 400;
-            background: transparent;
-            border: 1px solid var(--border);
-            color: var(--text);
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all var(--transition);
-            font-family: inherit;
-            letter-spacing: 0.3px;
-        }
-
-        .btn:hover {
-            background: var(--text);
-            color: var(--bg);
-            border-color: var(--text);
-        }
-
-        body.dark .btn:hover {
-            background: var(--text);
-            color: var(--bg);
-        }
-
-        .btn-primary {
-            background: var(--text);
-            color: var(--bg);
-            border-color: var(--text);
-        }
-
-        .btn-primary:hover {
-            opacity: 0.8;
-            transform: scale(0.97);
-        }
-
-        .btn-sm {
-            padding: 0.25rem 0.6rem;
-            font-size: 0.65rem;
-        }
-
-        .btn-danger {
-            border-color: #e74c3c;
-            color: #e74c3c;
-        }
-
-        .btn-danger:hover {
-            background: #e74c3c;
-            color: white;
-        }
-
-        /* ===== CLIMA ACTUAL ===== */
-        .weather-card {
-            background: var(--card);
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            text-align: center;
-            transition: all var(--transition);
-        }
-
-        .weather-main {
-            display: flex;
-            align-items: center;
             justify-content: center;
-            gap: 1.5rem;
-            flex-wrap: wrap;
-        }
-
-        .weather-icon {
-            font-size: 4rem;
-            line-height: 1;
-        }
-
-        .weather-temp {
-            font-size: 3.5rem;
-            font-weight: 300;
-            font-family: 'Georgia', serif;
-        }
-
-        .weather-temp sup {
-            font-size: 1.5rem;
-        }
-
-        .weather-desc {
-            font-size: 1.2rem;
-            opacity: 0.7;
-            text-transform: capitalize;
-            margin-top: 0.2rem;
-        }
-
-        .weather-details {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            gap: 1rem;
-            margin-top: 1.2rem;
-            padding-top: 1.2rem;
-            border-top: 1px solid var(--border);
-        }
-
-        .weather-detail {
-            font-size: 0.8rem;
-            opacity: 0.7;
-        }
-
-        .weather-detail strong {
-            display: block;
-            font-size: 1.1rem;
-            opacity: 1;
-            font-weight: 600;
-        }
-
-        .weather-location {
-            font-size: 1.1rem;
-            margin-bottom: 0.5rem;
-            opacity: 0.6;
-        }
-
-        /* ===== PREVISIÓN ===== */
-        .forecast-section {
-            background: var(--card);
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-            padding: 1.2rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .forecast-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-            gap: 0.8rem;
-            margin-top: 0.8rem;
-        }
-
-        .forecast-item {
-            text-align: center;
-            padding: 0.5rem;
-            border-radius: 8px;
-            background: var(--bg);
-            transition: all var(--transition);
-        }
-
-        .forecast-item .day {
-            font-size: 0.7rem;
-            opacity: 0.6;
-        }
-
-        .forecast-item .icon {
-            font-size: 1.8rem;
-            margin: 0.2rem 0;
-        }
-
-        .forecast-item .temp {
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        .forecast-item .temp-min {
-            font-size: 0.7rem;
-            opacity: 0.5;
-        }
-
-        /* ===== ALERTAS ===== */
-        .alerts-section {
-            background: var(--card);
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-            padding: 1.2rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .alert-form {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.8rem;
-            margin-top: 0.8rem;
-        }
-
-        .alert-form .full-width {
-            grid-column: 1 / -1;
-        }
-
-        .alert-form label {
-            font-size: 0.7rem;
-            font-weight: 500;
-            opacity: 0.6;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
-
-        .alert-form input,
-        .alert-form select {
-            padding: 0.5rem 0.7rem;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            background: transparent;
-            color: var(--text);
-            font-family: inherit;
-            font-size: 0.9rem;
-            outline: none;
-            width: 100%;
-        }
-
-        .alert-form input:focus,
-        .alert-form select:focus {
-            border-color: var(--accent);
-        }
-
-        .alert-form .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.3rem;
-        }
-
-        .alert-item {
-            display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 0.6rem 0.8rem;
-            border-bottom: 1px solid var(--border);
-            gap: 0.5rem;
-            flex-wrap: wrap;
         }
 
-        .alert-item:last-child {
-            border-bottom: none;
-        }
-
-        .alert-item .alert-info {
-            flex: 1;
-        }
-
-        .alert-item .alert-condition {
-            font-weight: 500;
-        }
-
-        .alert-item .alert-meta {
-            font-size: 0.7rem;
-            opacity: 0.6;
-        }
-
-        .alert-item .alert-actions {
-            display: flex;
-            gap: 0.3rem;
-        }
-
-        .alert-item .badge-active {
-            background: #2ecc71;
-            color: white;
-            padding: 0.1rem 0.5rem;
-            border-radius: 12px;
-            font-size: 0.6rem;
-        }
-
-        .alert-item .badge-inactive {
-            background: #95a5a6;
-            color: white;
-            padding: 0.1rem 0.5rem;
-            border-radius: 12px;
-            font-size: 0.6rem;
-        }
-
-        /* ===== NOTIFICACIÓN DE ALERTA ===== */
-        .alert-overlay {
-            display: none;
+        #three-container {
             position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-            animation: fadeIn 0.5s;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
         }
 
-        .alert-overlay.active {
-            display: flex;
-        }
-
-        .alert-box {
-            background: var(--card);
-            color: var(--text);
-            padding: 2.5rem;
-            border-radius: 20px;
-            max-width: 400px;
-            width: 90%;
+        .message {
+            position: relative;
+            z-index: 1;
             text-align: center;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            animation: bounceIn 0.5s;
+            padding: 2rem;
+            max-width: 600px;
+            animation: fadeIn 2s ease-in-out;
+            pointer-events: none;
         }
 
-        .alert-box .alert-icon {
-            font-size: 4rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .alert-box h2 {
-            font-size: 1.8rem;
+        .message h1 {
+            font-size: 2.8rem;
+            font-weight: 300;
+            color: #ffffff;
+            text-shadow: 0 0 30px rgba(255, 50, 50, 0.3);
+            letter-spacing: 2px;
             margin-bottom: 0.5rem;
             font-family: 'Georgia', serif;
         }
 
-        .alert-box .alert-message {
-            font-size: 1.1rem;
-            opacity: 0.7;
-            margin: 0.5rem 0 1.5rem;
+        .message .subtitle {
+            font-size: 1.2rem;
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.8);
+            text-shadow: 0 0 20px rgba(255, 50, 50, 0.2);
+            letter-spacing: 4px;
+            font-family: 'Georgia', serif;
+        }
+
+        .message .heart-emoji {
+            font-size: 1.5rem;
+            display: inline-block;
+            animation: pulse 1.5s ease-in-out infinite;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
         }
 
-        @keyframes bounceIn {
-            0% { transform: scale(0.5); opacity: 0; }
-            60% { transform: scale(1.05); }
-            100% { transform: scale(1); opacity: 1; }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
         }
 
-        /* ===== RESPONSIVE ===== */
+        /* Efecto de partículas de fondo sutil */
+        .particles-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            background: radial-gradient(ellipse at center, rgba(255, 50, 50, 0.03) 0%, transparent 70%);
+        }
+
         @media (max-width: 600px) {
-            .alert-form {
-                grid-template-columns: 1fr;
+            .message h1 {
+                font-size: 2rem;
             }
-            .header { flex-direction: column; align-items: stretch; }
-            .header h1 { font-size: 1.4rem; }
-            .weather-temp { font-size: 2.5rem; }
-            .forecast-grid { grid-template-columns: repeat(4, 1fr); }
+            .message .subtitle {
+                font-size: 1rem;
+                letter-spacing: 2px;
+            }
         }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <!-- HEADER -->
-    <header class="header">
-        <h1>AXIOM <span>WEATHER</span></h1>
-        <div class="header-actions">
-            <button class="btn btn-sm" id="themeToggle">Light Mode</button>
-            <button class="btn btn-sm" id="refreshWeather">🔄 Actualizar</button>
-            <button class="btn btn-sm" id="requestPermission">🔔 Notificaciones</button>
-            <button class="btn btn-sm" id="testAlert">🔔 Probar alerta</button>
-        </div>
-    </header>
+    <!-- Contenedor Three.js -->
+    <div id="three-container"></div>
 
-    <!-- CLIMA ACTUAL -->
-    <div class="weather-card" id="weatherCard">
-        <div class="weather-location" id="weatherLocation">📍 Cargando ubicación...</div>
-        <div class="weather-main">
-            <div class="weather-icon" id="weatherIcon">🌤️</div>
-            <div>
-                <div class="weather-temp" id="weatherTemp">--<sup>°C</sup></div>
-                <div class="weather-desc" id="weatherDesc">Cargando...</div>
-            </div>
-        </div>
-        <div class="weather-details">
-            <div class="weather-detail"><strong id="feelsLike">--</strong>Sensación</div>
-            <div class="weather-detail"><strong id="humidity">--</strong>Humedad</div>
-            <div class="weather-detail"><strong id="wind">--</strong>Viento</div>
-            <div class="weather-detail"><strong id="pressure">--</strong>Presión</div>
-        </div>
+    <!-- Mensaje superpuesto -->
+    <div class="message">
+        <h1>
+            <span class="heart-emoji">❤️</span>
+            Te quiero hermano
+            <span class="heart-emoji">❤️</span>
+        </h1>
+        <div class="subtitle">Siempre a tu lado</div>
     </div>
 
-    <!-- PREVISIÓN 7 DÍAS -->
-    <div class="forecast-section">
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
-            <h3 style="font-weight:300; font-family:'Georgia',serif;">📅 Previsión 7 días</h3>
-            <span style="font-size:0.7rem; opacity:0.5;" id="forecastUpdate">Actualizado ahora</span>
-        </div>
-        <div class="forecast-grid" id="forecastGrid">
-            <div style="text-align:center; padding:1rem; opacity:0.5;">Cargando previsión...</div>
-        </div>
-    </div>
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
-    <!-- ALERTAS -->
-    <div class="alerts-section">
-        <h3 style="font-weight:300; font-family:'Georgia',serif; margin-bottom:0.5rem;">🔔 Alertas personalizadas</h3>
-        <p style="font-size:0.8rem; opacity:0.5; margin-bottom:0.8rem;">Recibe una notificación cuando se cumpla la condición</p>
+    <script>
+        // ============================================================
+        //  CORAZÓN DINÁMICO 3D PARA RAÚL
+        //  Hecho con amor ❤️
+        // ============================================================
 
-        <div class="alert-form" id="alertForm">
-            <div class="form-group">
-                <label>Condición</label>
-                <select id="alertCondition">
-                    <option value="exact">Temperatura exacta</option>
-                    <option value="min">Temperatura mínima (baja de)</option>
-                    <option value="max">Temperatura máxima (sube de)</option>
-                    <option value="range">Rango de temperatura</option>
-                    <option value="rain">Va a llover</option>
-                    <option value="wind">Viento (km/h)</option>
-                    <option value="humidity">Humedad (%)</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Valor</label>
-                <input type="number" id="alertValue" placeholder="Ej: 20" step="0.1">
-            </div>
-            <div class="form-group" id="rangeMaxGroup" style="display:none;">
-                <label>Valor máximo</label>
-                <input type="number" id="alertValueMax" placeholder="Ej: 25" step="0.1">
-            </div>
-            <div class="form-group full-width">
-                <label>Mensaje personalizado (opcional)</label>
-                <input type="text" id="alertMessage" placeholder="Ej: ¡Lleva paraguas!">
-            </div>
-            <div class="form-group full-width" style="display:flex; flex-direction:row; gap:0.5rem; align-items:center;">
-                <button class="btn btn-primary" id="saveAlert">➕ Guardar alerta</button>
-                <button class="btn" id="clearAlerts">🗑️ Eliminar todas</button>
-            </div>
-        </div>
+        // ----- CONFIGURACIÓN -----
+        const container = document.getElementById('three-container');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0a0a0a);
 
-        <div style="margin-top: 1rem;">
-            <div id="alertsList">
-                <div style="text-align:center; padding:0.5rem; opacity:0.4; font-size:0.8rem;">No hay alertas configuradas</div>
-            </div>
-        </div>
-    </div>
-</div>
+        // ----- CÁMARA -----
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 0, 5);
+        camera.lookAt(0, 0, 0);
 
-<!-- ALERTA OVERLAY -->
-<div class="alert-overlay" id="alertOverlay">
-    <div class="alert-box">
-        <div class="alert-icon" id="alertIcon">🌡️</div>
-        <h2 id="alertTitle">¡Alerta del tiempo!</h2>
-        <div class="alert-message" id="alertMessageDisplay">Se ha cumplido tu condición</div>
-        <div style="margin:0.5rem 0; font-size:0.8rem; opacity:0.5;" id="alertDetails"></div>
-        <button class="btn btn-primary" id="dismissAlert" style="font-size:1.2rem; padding:0.8rem 2rem;">✅ Aceptar</button>
-    </div>
-</div>
+        // ----- RENDERER -----
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.shadowMap.enabled = true;
+        container.appendChild(renderer.domElement);
 
-<script>
-    // ============================================================
-    //  AXIOM WEATHER · SISTEMA DE ALERTAS DEL TIEMPO
-    //  Versión 1.0 · Todas las funciones
-    // ============================================================
+        // ----- LUCES -----
+        const ambientLight = new THREE.AmbientLight(0x404060, 0.5);
+        scene.add(ambientLight);
 
-    // ----- ESTADO -----
-    let weatherData = null;
-    let forecastData = null;
-    let alerts = [];
-    let darkMode = false;
-    let notificationPermission = false;
-    let currentLocation = 'Madrid';
-    let checkInterval = null;
-    let alertCheckInterval = null;
+        const light1 = new THREE.DirectionalLight(0xff3366, 1.2);
+        light1.position.set(2, 3, 4);
+        scene.add(light1);
 
-    // ----- DOM -----
-    const weatherLocation = document.getElementById('weatherLocation');
-    const weatherIcon = document.getElementById('weatherIcon');
-    const weatherTemp = document.getElementById('weatherTemp');
-    const weatherDesc = document.getElementById('weatherDesc');
-    const feelsLike = document.getElementById('feelsLike');
-    const humidity = document.getElementById('humidity');
-    const wind = document.getElementById('wind');
-    const pressure = document.getElementById('pressure');
-    const forecastGrid = document.getElementById('forecastGrid');
-    const alertsList = document.getElementById('alertsList');
-    const alertOverlay = document.getElementById('alertOverlay');
-    const alertTitle = document.getElementById('alertTitle');
-    const alertMessageDisplay = document.getElementById('alertMessageDisplay');
-    const alertDetails = document.getElementById('alertDetails');
-    const alertIcon = document.getElementById('alertIcon');
+        const light2 = new THREE.DirectionalLight(0xff6699, 0.8);
+        light2.position.set(-3, -1, 2);
+        scene.add(light2);
 
-    // ----- API CONFIG -----
-    const API_KEY = 'bd5e378503939ddaee76f12ad7a97608'; // OpenWeatherMap API key (gratuita)
-    const UNITS = 'metric';
-    const LANG = 'es';
+        const backLight = new THREE.DirectionalLight(0xcc3366, 0.5);
+        backLight.position.set(0, 0, -5);
+        scene.add(backLight);
 
-    // ----- FUNCIONES PRINCIPALES -----
+        // Punto de luz extra para brillo
+        const pointLight = new THREE.PointLight(0xff0044, 0.5, 10);
+        pointLight.position.set(0, 0, 2);
+        scene.add(pointLight);
 
-    // Obtener ubicación
-    function getLocation() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (pos) => {
-                    const { latitude, longitude } = pos.coords;
-                    fetchWeather(latitude, longitude);
-                    fetchForecast(latitude, longitude);
-                },
-                (error) => {
-                    console.log('Error de geolocalización, usando Madrid por defecto', error);
-                    fetchWeatherByCity('Madrid');
-                    fetchForecastByCity('Madrid');
-                }
-            );
-        } else {
-            fetchWeatherByCity('Madrid');
-            fetchForecastByCity('Madrid');
-        }
-    }
+        // ----- CREAR CORAZÓN 3D -----
+        function createHeart() {
+            const group = new THREE.Group();
 
-    // Fetch clima actual
-    function fetchWeather(lat, lon) {
-        const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=${UNITS}&lang=${LANG}&appid=${API_KEY}`;
-        fetch(url)
-            .then(res => res.json())
-            .then(data => {
-                if (data.cod === 200) {
-                    weatherData = data;
-                    updateWeatherUI(data);
-                    checkAlerts(data);
-                    saveData();
-                } else {
-                    console.error('Error API:', data);
-                }
-            })
-            .catch(err => console.error('Error fetching weather:', err));
-    }
+            // Ecuación paramétrica del corazón
+            // x = 16 sin³(t)
+            // y = 13 cos(t) - 5 cos(2t) - 2 cos(3t) - cos(4t)
+            const points = [];
+            const segments = 60;
 
-    function fetchWeatherByCity(city) {
-        const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=${UNITS}&lang=${LANG}&appid=${API_KEY}`;
-        fetch(url)
-            .then(res => res.json())
-            .then(data => {
-                if (data.cod === 200) {
-                    weatherData = data;
-                    updateWeatherUI(data);
-                    checkAlerts(data);
-                    saveData();
-                } else {
-                    console.error('Error API:', data);
-                }
-            })
-            .catch(err => console.error('Error fetching weather:', err));
-    }
-
-    // Fetch previsión
-    function fetchForecast(lat, lon) {
-        const url = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=${UNITS}&lang=${LANG}&appid=${API_KEY}`;
-        fetch(url)
-            .then(res => res.json())
-            .then(data => {
-                if (data.cod === '200') {
-                    forecastData = data;
-                    updateForecastUI(data);
-                    saveData();
-                }
-            })
-            .catch(err => console.error('Error fetching forecast:', err));
-    }
-
-    function fetchForecastByCity(city) {
-        const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=${UNITS}&lang=${LANG}&appid=${API_KEY}`;
-        fetch(url)
-            .then(res => res.json())
-            .then(data => {
-                if (data.cod === '200') {
-                    forecastData = data;
-                    updateForecastUI(data);
-                    saveData();
-                }
-            })
-            .catch(err => console.error('Error fetching forecast:', err));
-    }
-
-    // ----- UPDATE UI -----
-    function updateWeatherUI(data) {
-        const temp = Math.round(data.main.temp);
-        const feels = Math.round(data.main.feels_like);
-        const humid = data.main.humidity;
-        const windSpeed = Math.round(data.wind.speed * 3.6); // m/s a km/h
-        const press = data.main.pressure;
-        const desc = data.weather[0].description;
-        const icon = getWeatherIcon(data.weather[0].icon, data.weather[0].main);
-        const city = data.name;
-
-        weatherLocation.textContent = `📍 ${city}, ${data.sys.country}`;
-        weatherIcon.textContent = icon;
-        weatherTemp.innerHTML = `${temp}<sup>°C</sup>`;
-        weatherDesc.textContent = desc;
-        feelsLike.textContent = `${feels}°C`;
-        humidity.textContent = `${humid}%`;
-        wind.textContent = `${windSpeed} km/h`;
-        pressure.textContent = `${press} hPa`;
-
-        currentLocation = city;
-        document.getElementById('forecastUpdate').textContent = `Actualizado ${new Date().toLocaleTimeString()}`;
-    }
-
-    function updateForecastUI(data) {
-        const list = data.list;
-        const daily = [];
-        const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
-
-        // Agrupar por día
-        const grouped = {};
-        list.forEach(item => {
-            const date = new Date(item.dt * 1000);
-            const key = date.toDateString();
-            if (!grouped[key]) {
-                grouped[key] = {
-                    date: date,
-                    tempMax: item.main.temp_max,
-                    tempMin: item.main.temp_min,
-                    icon: item.weather[0].icon,
-                    main: item.weather[0].main
-                };
-            } else {
-                grouped[key].tempMax = Math.max(grouped[key].tempMax, item.main.temp_max);
-                grouped[key].tempMin = Math.min(grouped[key].tempMin, item.main.temp_min);
-            }
-        });
-
-        const keys = Object.keys(grouped);
-        forecastGrid.innerHTML = '';
-        keys.slice(0, 7).forEach(key => {
-            const day = grouped[key];
-            const icon = getWeatherIcon(day.icon, day.main);
-            const dayName = day.date.getDay();
-            const dayLabel = dayName === new Date().getDay() ? 'Hoy' : days[dayName];
-
-            const div = document.createElement('div');
-            div.className = 'forecast-item';
-            div.innerHTML = `
-                <div class="day">${dayLabel}</div>
-                <div class="icon">${icon}</div>
-                <div class="temp">${Math.round(day.tempMax)}°</div>
-                <div class="temp-min">${Math.round(day.tempMin)}°</div>
-            `;
-            forecastGrid.appendChild(div);
-        });
-    }
-
-    // ----- ICONOS -----
-    function getWeatherIcon(icon, main) {
-        const icons = {
-            '01d': '☀️',
-            '01n': '🌙',
-            '02d': '⛅',
-            '02n': '☁️',
-            '03d': '☁️',
-            '03n': '☁️',
-            '04d': '☁️',
-            '04n': '☁️',
-            '09d': '🌧️',
-            '09n': '🌧️',
-            '10d': '🌦️',
-            '10n': '🌧️',
-            '11d': '⛈️',
-            '11n': '⛈️',
-            '13d': '❄️',
-            '13n': '❄️',
-            '50d': '🌫️',
-            '50n': '🌫️'
-        };
-        return icons[icon] || '🌤️';
-    }
-
-    // ----- ALERTAS -----
-    function checkAlerts(weather) {
-        if (!weather || !alerts.length) return;
-        const temp = weather.main.temp;
-        const humidityVal = weather.main.humidity;
-        const windVal = Math.round(weather.wind.speed * 3.6);
-        const mainCondition = weather.weather[0].main.toLowerCase();
-        const willRain = mainCondition.includes('rain') || mainCondition.includes('drizzle');
-
-        alerts.forEach(alert => {
-            if (!alert.active) return;
-            let triggered = false;
-            let triggerMessage = '';
-
-            switch(alert.condition) {
-                case 'exact':
-                    if (Math.round(temp) === Math.round(alert.value)) {
-                        triggered = true;
-                        triggerMessage = `¡La temperatura es de ${Math.round(temp)}°C!`;
-                    }
-                    break;
-                case 'min':
-                    if (temp < alert.value) {
-                        triggered = true;
-                        triggerMessage = `¡La temperatura ha bajado de ${alert.value}°C (${Math.round(temp)}°C)!`;
-                    }
-                    break;
-                case 'max':
-                    if (temp > alert.value) {
-                        triggered = true;
-                        triggerMessage = `¡La temperatura ha subido de ${alert.value}°C (${Math.round(temp)}°C)!`;
-                    }
-                    break;
-                case 'range':
-                    if (temp >= alert.value && temp <= alert.valueMax) {
-                        triggered = true;
-                        triggerMessage = `¡La temperatura está entre ${alert.value}°C y ${alert.valueMax}°C (${Math.round(temp)}°C)!`;
-                    }
-                    break;
-                case 'rain':
-                    if (willRain) {
-                        triggered = true;
-                        triggerMessage = '¡Va a llover! Lleva paraguas ☔';
-                    }
-                    break;
-                case 'wind':
-                    if (windVal > alert.value) {
-                        triggered = true;
-                        triggerMessage = `¡El viento ha superado ${alert.value} km/h (${windVal} km/h)!`;
-                    }
-                    break;
-                case 'humidity':
-                    if (humidityVal > alert.value) {
-                        triggered = true;
-                        triggerMessage = `¡La humedad ha superado ${alert.value}% (${humidityVal}%)!`;
-                    }
-                    break;
+            for (let i = 0; i <= segments; i++) {
+                const t = (i / segments) * Math.PI * 2;
+                const x = 16 * Math.pow(Math.sin(t), 3);
+                const y = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
+                points.push(new THREE.Vector3(x * 0.055, y * 0.055, 0));
             }
 
-            if (triggered) {
-                triggerAlert(alert, triggerMessage, weather);
-                // Desactivar alerta temporalmente para evitar spam
-                alert.active = false;
-                setTimeout(() => {
-                    alert.active = true;
-                    saveData();
-                    renderAlerts();
-                }, 60000); // Reactivar después de 1 minuto
-                saveData();
-                renderAlerts();
+            // Crear forma
+            const shape = new THREE.Shape();
+            shape.moveTo(points[0].x, points[0].y);
+            for (let i = 1; i < points.length; i++) {
+                shape.lineTo(points[i].x, points[i].y);
             }
-        });
-    }
+            shape.lineTo(points[0].x, points[0].y);
 
-    function triggerAlert(alert, message, weather) {
-        // Sonido
-        playAlertSound();
-
-        // Vibración
-        if (navigator.vibrate) {
-            navigator.vibrate([500, 200, 500, 200, 1000]);
-        }
-
-        // Notificación del sistema
-        if (notificationPermission) {
-            showNotification('🌡️ ¡Alerta del tiempo!', `${alert.message || message}`);
-        }
-
-        // Overlay
-        alertIcon.textContent = '🌡️';
-        alertTitle.textContent = '¡Alerta del tiempo!';
-        alertMessageDisplay.textContent = alert.message || message;
-        alertDetails.textContent = `📍 ${weather.name} · ${Math.round(weather.main.temp)}°C · ${weather.weather[0].description}`;
-        alertOverlay.classList.add('active');
-
-        // Auto-cerrar después de 30 segundos
-        setTimeout(() => {
-            if (alertOverlay.classList.contains('active')) {
-                dismissAlert();
-            }
-        }, 30000);
-    }
-
-    function dismissAlert() {
-        alertOverlay.classList.remove('active');
-        // Detener sonido
-        if (alertAudio) {
-            alertAudio.pause();
-            alertAudio = null;
-        }
-    }
-
-    let alertAudio = null;
-
-    function playAlertSound() {
-        try {
-            if (alertAudio) {
-                alertAudio.pause();
-                alertAudio = null;
-            }
-            const ctx = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = ctx.createOscillator();
-            const gain = ctx.createGain();
-            oscillator.connect(gain);
-            gain.connect(ctx.destination);
-            oscillator.frequency.value = 880;
-            oscillator.type = 'square';
-            gain.gain.value = 0.2;
-            oscillator.start();
-            
-            let count = 0;
-            const interval = setInterval(() => {
-                if (count >= 5) {
-                    clearInterval(interval);
-                    oscillator.stop();
-                    return;
-                }
-                oscillator.frequency.value = count % 2 === 0 ? 880 : 660;
-                count++;
-            }, 300);
-            
-            alertAudio = { stop: () => { clearInterval(interval); oscillator.stop(); } };
-        } catch(e) {
-            console.log('Error con el sonido', e);
-        }
-    }
-
-    // ----- GUARDAR ALERTAS -----
-    function saveAlert() {
-        const condition = document.getElementById('alertCondition').value;
-        const value = parseFloat(document.getElementById('alertValue').value);
-        const valueMax = parseFloat(document.getElementById('alertValueMax').value);
-        const message = document.getElementById('alertMessage').value.trim();
-
-        if (isNaN(value) && condition !== 'rain') {
-            alert('Por favor, introduce un valor válido');
-            return;
-        }
-
-        if (condition === 'range' && (isNaN(value) || isNaN(valueMax) || value > valueMax)) {
-            alert('Por favor, introduce un rango válido (mínimo < máximo)');
-            return;
-        }
-
-        const alert = {
-            id: Date.now().toString(36) + Math.random().toString(36).substr(2, 5),
-            condition: condition,
-            value: value,
-            valueMax: condition === 'range' ? valueMax : null,
-            message: message || getDefaultMessage(condition, value, valueMax),
-            active: true,
-            createdAt: new Date()
-        };
-
-        alerts.push(alert);
-        saveData();
-        renderAlerts();
-        document.getElementById('alertValue').value = '';
-        document.getElementById('alertValueMax').value = '';
-        document.getElementById('alertMessage').value = '';
-
-        if (notificationPermission) {
-            showNotification('✅ Alerta guardada', `Te avisaré cuando: ${alert.message}`);
-        }
-    }
-
-    function getDefaultMessage(condition, value, valueMax) {
-        const messages = {
-            exact: `Haga ${value}°C`,
-            min: `Baje de ${value}°C`,
-            max: `Suba de ${value}°C`,
-            range: `Esté entre ${value}°C y ${valueMax}°C`,
-            rain: 'Vaya a llover',
-            wind: `El viento supere ${value} km/h`,
-            humidity: `La humedad supere ${value}%`
-        };
-        return messages[condition] || 'Condición del tiempo';
-    }
-
-    function deleteAlert(id) {
-        alerts = alerts.filter(a => a.id !== id);
-        saveData();
-        renderAlerts();
-    }
-
-    function toggleAlert(id) {
-        const alert = alerts.find(a => a.id === id);
-        if (alert) {
-            alert.active = !alert.active;
-            saveData();
-            renderAlerts();
-        }
-    }
-
-    function clearAlerts() {
-        if (!confirm('¿Eliminar todas las alertas?')) return;
-        alerts = [];
-        saveData();
-        renderAlerts();
-    }
-
-    // ----- RENDER ALERTS -----
-    function renderAlerts() {
-        if (alerts.length === 0) {
-            alertsList.innerHTML = '<div style="text-align:center; padding:0.5rem; opacity:0.4; font-size:0.8rem;">No hay alertas configuradas</div>';
-            return;
-        }
-
-        alertsList.innerHTML = '';
-        alerts.forEach(alert => {
-            const div = document.createElement('div');
-            div.className = 'alert-item';
-            
-            const conditionLabels = {
-                exact: `Temperatura exacta ${alert.value}°C`,
-                min: `Temperatura mínima ${alert.value}°C`,
-                max: `Temperatura máxima ${alert.value}°C`,
-                range: `Rango ${alert.value}°C - ${alert.valueMax}°C`,
-                rain: 'Lluvia',
-                wind: `Viento > ${alert.value} km/h`,
-                humidity: `Humedad > ${alert.value}%`
+            // Extruir para darle volumen 3D
+            const extrudeSettings = {
+                depth: 0.3,
+                bevelEnabled: true,
+                bevelSegments: 8,
+                bevelSize: 0.08,
+                bevelThickness: 0.1,
+                steps: 1
             };
 
-            div.innerHTML = `
-                <div class="alert-info">
-                    <div class="alert-condition">${conditionLabels[alert.condition] || alert.condition}</div>
-                    <div class="alert-meta">${alert.message || ''} · ${new Date(alert.createdAt).toLocaleDateString()}</div>
-                </div>
-                <div class="alert-actions">
-                    <span class="${alert.active ? 'badge-active' : 'badge-inactive'}">${alert.active ? 'Activa' : 'Inactiva'}</span>
-                    <button class="btn btn-sm" onclick="toggleAlert('${alert.id}')">${alert.active ? '⏸️' : '▶️'}</button>
-                    <button class="btn btn-sm btn-danger" onclick="deleteAlert('${alert.id}')">🗑️</button>
-                </div>
-            `;
-            alertsList.appendChild(div);
-        });
-    }
-
-    // ----- NOTIFICACIONES -----
-    function requestNotificationPermission() {
-        if (!('Notification' in window)) {
-            alert('Este navegador no soporta notificaciones');
-            return;
-        }
-        
-        Notification.requestPermission().then(perm => {
-            notificationPermission = perm === 'granted';
-            if (notificationPermission) {
-                alert('✅ Notificaciones activadas');
-                showNotification('🔔 AXIOM WEATHER', 'Las alertas funcionarán correctamente');
-            } else {
-                alert('❌ Permiso denegado. Actívalo desde la configuración');
-            }
-        });
-    }
-
-    function showNotification(title, body) {
-        if (notificationPermission) {
-            try {
-                new Notification(title, {
-                    body: body,
-                    icon: '🌡️'
-                });
-            } catch(e) {
-                console.log('Error mostrando notificación', e);
-            }
-        }
-    }
-
-    // ----- ALMACENAMIENTO -----
-    function saveData() {
-        try {
-            localStorage.setItem('axiom_weather_alerts', JSON.stringify(alerts));
-            localStorage.setItem('axiom_weather_prefs', JSON.stringify({
-                darkMode: darkMode,
-                location: currentLocation
-            }));
-        } catch(e) { console.log('Error guardando', e); }
-    }
-
-    function loadData() {
-        try {
-            const savedAlerts = localStorage.getItem('axiom_weather_alerts');
-            if (savedAlerts) {
-                alerts = JSON.parse(savedAlerts);
-            }
+            const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
             
-            const prefs = localStorage.getItem('axiom_weather_prefs');
-            if (prefs) {
-                const p = JSON.parse(prefs);
-                darkMode = p.darkMode || false;
-                if (darkMode) document.body.classList.add('dark');
-                document.getElementById('themeToggle').textContent = darkMode ? 'Dark Mode' : 'Light Mode';
+            // Centrar el corazón
+            geometry.computeBoundingBox();
+            const center = geometry.boundingBox.getCenter(new THREE.Vector3());
+            geometry.translate(-center.x, -center.y, -center.z);
+
+            // Material con brillo y color rojo intenso
+            const material = new THREE.MeshPhysicalMaterial({
+                color: 0xff2255,
+                metalness: 0.3,
+                roughness: 0.2,
+                clearcoat: 0.4,
+                clearcoatRoughness: 0.2,
+                emissive: 0xaa0044,
+                emissiveIntensity: 0.15,
+                specularIntensity: 0.8,
+                envMapIntensity: 0.6,
+            });
+
+            const heart = new THREE.Mesh(geometry, material);
+            heart.castShadow = true;
+            heart.receiveShadow = true;
+            group.add(heart);
+
+            // Añadir un borde brillante alrededor
+            const edgeGeometry = new THREE.EdgesGeometry(geometry);
+            const edgeMaterial = new THREE.LineBasicMaterial({ 
+                color: 0xff4477, 
+                transparent: true, 
+                opacity: 0.2 
+            });
+            const edges = new THREE.LineSegments(edgeGeometry, edgeMaterial);
+            group.add(edges);
+
+            // Partículas alrededor (como pequeñas chispas)
+            const particleCount = 300;
+            const particleGeo = new THREE.BufferGeometry();
+            const positions = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
+
+            for (let i = 0; i < particleCount; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const radius = 0.8 + Math.random() * 1.2;
+                const height = (Math.random() - 0.5) * 1.5;
+                
+                positions[i * 3] = Math.cos(angle) * radius;
+                positions[i * 3 + 1] = Math.sin(angle) * radius * 0.8 + 0.1;
+                positions[i * 3 + 2] = (Math.random() - 0.5) * 0.8;
+
+                const color = new THREE.Color(0xff3366).lerp(new THREE.Color(0xff6699), Math.random());
+                colors[i * 3] = color.r;
+                colors[i * 3 + 1] = color.g;
+                colors[i * 3 + 2] = color.b;
             }
-        } catch(e) { console.log('Error cargando', e); }
-        renderAlerts();
-    }
 
-    // ----- TEST -----
-    function testAlert() {
-        const testWeather = {
-            main: {
-                temp: 20,
-                feels_like: 18,
-                humidity: 65,
-                pressure: 1015
-            },
-            wind: {
-                speed: 5.5
-            },
-            weather: [{
-                main: 'Clear',
-                description: 'cielo claro'
-            }],
-            name: 'Madrid',
-            sys: { country: 'ES' }
-        };
-        
-        const testAlertData = {
-            id: 'test',
-            condition: 'exact',
-            value: 20,
-            message: '🧪 ¡Esto es una prueba de alerta!',
-            active: true
-        };
-        
-        triggerAlert(testAlertData, '🧪 Alerta de prueba activada', testWeather);
-        
-        // Auto-cerrar después de 8 segundos
-        setTimeout(() => {
-            if (alertOverlay.classList.contains('active')) {
-                dismissAlert();
-            }
-        }, 8000);
-    }
+            particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            particleGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
-    // ----- EVENTOS -----
+            const particleMat = new THREE.PointsMaterial({
+                size: 0.035,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.6,
+                blending: THREE.AdditiveBlending,
+            });
 
-    document.addEventListener('DOMContentLoaded', () => {
-        loadData();
-        getLocation();
-        
-        // Permiso de notificaciones al inicio
-        if ('Notification' in window && Notification.permission === 'granted') {
-            notificationPermission = true;
+            const particles = new THREE.Points(particleGeo, particleMat);
+            group.add(particles);
+
+            return group;
         }
 
-        // Verificar alertas cada 2 minutos
-        alertCheckInterval = setInterval(() => {
-            if (weatherData) {
-                checkAlerts(weatherData);
+        const heartGroup = createHeart();
+        heartGroup.scale.set(1.2, 1.2, 1.2);
+        scene.add(heartGroup);
+
+        // ----- ESTRELLAS DE FONDO -----
+        function createStars() {
+            const count = 800;
+            const positions = new Float32Array(count * 3);
+            const colors = new Float32Array(count * 3);
+
+            for (let i = 0; i < count; i++) {
+                const radius = 10 + Math.random() * 40;
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos(2 * Math.random() - 1);
+
+                positions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
+                positions[i * 3 + 1] = radius * Math.cos(phi);
+                positions[i * 3 + 2] = radius * Math.sin(phi) * Math.sin(theta);
+
+                const intensity = 0.3 + Math.random() * 0.7;
+                colors[i * 3] = intensity;
+                colors[i * 3 + 1] = intensity * 0.8;
+                colors[i * 3 + 2] = intensity;
             }
-        }, 120000);
-    });
 
-    // Guardar alerta
-    document.getElementById('saveAlert').addEventListener('click', saveAlert);
+            const geo = new THREE.BufferGeometry();
+            geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
-    // Condición de rango
-    document.getElementById('alertCondition').addEventListener('change', function() {
-        const rangeGroup = document.getElementById('rangeMaxGroup');
-        rangeGroup.style.display = this.value === 'range' ? 'block' : 'none';
-        document.getElementById('alertValue').placeholder = this.value === 'rain' ? '' : this.value === 'range' ? 'Mínimo' : 'Valor';
-    });
+            const mat = new THREE.PointsMaterial({
+                size: 0.08,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.6,
+                blending: THREE.AdditiveBlending,
+            });
 
-    // Tema
-    document.getElementById('themeToggle').addEventListener('click', () => {
-        darkMode = !darkMode;
-        document.body.classList.toggle('dark', darkMode);
-        document.getElementById('themeToggle').textContent = darkMode ? 'Dark Mode' : 'Light Mode';
-        saveData();
-    });
-
-    // Actualizar clima
-    document.getElementById('refreshWeather').addEventListener('click', () => {
-        getLocation();
-    });
-
-    // Notificaciones
-    document.getElementById('requestPermission').addEventListener('click', requestNotificationPermission);
-
-    // Test alerta
-    document.getElementById('testAlert').addEventListener('click', testAlert);
-
-    // Limpiar alertas
-    document.getElementById('clearAlerts').addEventListener('click', clearAlerts);
-
-    // Dismiss alerta
-    document.getElementById('dismissAlert').addEventListener('click', dismissAlert);
-
-    // Enter para guardar
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && e.target.closest('.alert-form')) {
-            document.getElementById('saveAlert').click();
+            return new THREE.Points(geo, mat);
         }
-    });
 
-    // Exponer funciones globales
-    window.deleteAlert = deleteAlert;
-    window.toggleAlert = toggleAlert;
-    window.dismissAlert = dismissAlert;
+        const stars = createStars();
+        scene.add(stars);
 
-    console.log('🌤️ AXIOM WEATHER cargado con éxito');
-    console.log('🔔 ' + alerts.length + ' alertas activas');
-</script>
+        // ----- ANIMACIÓN -----
+        let time = 0;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            time += 0.008;
+
+            // Rotación del corazón
+            heartGroup.rotation.x = Math.sin(time * 0.3) * 0.08;
+            heartGroup.rotation.y = time * 0.5;
+            heartGroup.rotation.z = Math.sin(time * 0.2) * 0.05;
+
+            // Latido (pulsación)
+            const beat = Math.sin(time * 4) * 0.03 + 1;
+            const beat2 = Math.sin(time * 4 + 0.5) * 0.015 + 1;
+            heartGroup.scale.x = 1.2 * beat * beat2;
+            heartGroup.scale.y = 1.2 * beat * beat2;
+            heartGroup.scale.z = 1.2 * beat * beat2;
+
+            // Rotación de estrellas
+            stars.rotation.x += 0.0001;
+            stars.rotation.y += 0.0002;
+
+            // Luz parpadeante
+            pointLight.intensity = 0.4 + Math.sin(time * 3) * 0.2;
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // ----- RESPONSIVE -----
+        function onResize() {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+            renderer.setSize(width, height);
+        }
+
+        window.addEventListener('resize', onResize);
+
+        // ----- CONSOLA (detalle extra) -----
+        console.log('❤️ Para Raúl - Te quiero hermano');
+        console.log('❤️ Siempre a tu lado');
+    </script>
 </body>
 </html>

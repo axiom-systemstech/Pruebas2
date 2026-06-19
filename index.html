@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>❤️ Para Raúl</title>
+    <title>❤️ Para Pato</title>
     <style>
         * {
             margin: 0;
@@ -75,7 +75,6 @@
             50% { transform: scale(1.2); }
         }
 
-        /* Efecto de partículas de fondo sutil */
         .particles-overlay {
             position: fixed;
             top: 0;
@@ -107,7 +106,7 @@
     <div class="message">
         <h1>
             <span class="heart-emoji">❤️</span>
-            Te quiero hermano
+            Te quiero Pato
             <span class="heart-emoji">❤️</span>
         </h1>
         <div class="subtitle">Siempre a tu lado</div>
@@ -118,7 +117,7 @@
 
     <script>
         // ============================================================
-        //  CORAZÓN DINÁMICO 3D PARA RAÚL
+        //  CORAZÓN DINÁMICO 3D PARA PATO
         //  Hecho con amor ❤️
         // ============================================================
 
@@ -155,7 +154,6 @@
         backLight.position.set(0, 0, -5);
         scene.add(backLight);
 
-        // Punto de luz extra para brillo
         const pointLight = new THREE.PointLight(0xff0044, 0.5, 10);
         pointLight.position.set(0, 0, 2);
         scene.add(pointLight);
@@ -164,9 +162,6 @@
         function createHeart() {
             const group = new THREE.Group();
 
-            // Ecuación paramétrica del corazón
-            // x = 16 sin³(t)
-            // y = 13 cos(t) - 5 cos(2t) - 2 cos(3t) - cos(4t)
             const points = [];
             const segments = 60;
 
@@ -177,7 +172,6 @@
                 points.push(new THREE.Vector3(x * 0.055, y * 0.055, 0));
             }
 
-            // Crear forma
             const shape = new THREE.Shape();
             shape.moveTo(points[0].x, points[0].y);
             for (let i = 1; i < points.length; i++) {
@@ -185,7 +179,6 @@
             }
             shape.lineTo(points[0].x, points[0].y);
 
-            // Extruir para darle volumen 3D
             const extrudeSettings = {
                 depth: 0.3,
                 bevelEnabled: true,
@@ -197,12 +190,10 @@
 
             const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
             
-            // Centrar el corazón
             geometry.computeBoundingBox();
             const center = geometry.boundingBox.getCenter(new THREE.Vector3());
             geometry.translate(-center.x, -center.y, -center.z);
 
-            // Material con brillo y color rojo intenso
             const material = new THREE.MeshPhysicalMaterial({
                 color: 0xff2255,
                 metalness: 0.3,
@@ -220,7 +211,6 @@
             heart.receiveShadow = true;
             group.add(heart);
 
-            // Añadir un borde brillante alrededor
             const edgeGeometry = new THREE.EdgesGeometry(geometry);
             const edgeMaterial = new THREE.LineBasicMaterial({ 
                 color: 0xff4477, 
@@ -230,7 +220,6 @@
             const edges = new THREE.LineSegments(edgeGeometry, edgeMaterial);
             group.add(edges);
 
-            // Partículas alrededor (como pequeñas chispas)
             const particleCount = 300;
             const particleGeo = new THREE.BufferGeometry();
             const positions = new Float32Array(particleCount * 3);
@@ -318,23 +307,19 @@
             requestAnimationFrame(animate);
             time += 0.008;
 
-            // Rotación del corazón
             heartGroup.rotation.x = Math.sin(time * 0.3) * 0.08;
             heartGroup.rotation.y = time * 0.5;
             heartGroup.rotation.z = Math.sin(time * 0.2) * 0.05;
 
-            // Latido (pulsación)
             const beat = Math.sin(time * 4) * 0.03 + 1;
             const beat2 = Math.sin(time * 4 + 0.5) * 0.015 + 1;
             heartGroup.scale.x = 1.2 * beat * beat2;
             heartGroup.scale.y = 1.2 * beat * beat2;
             heartGroup.scale.z = 1.2 * beat * beat2;
 
-            // Rotación de estrellas
             stars.rotation.x += 0.0001;
             stars.rotation.y += 0.0002;
 
-            // Luz parpadeante
             pointLight.intensity = 0.4 + Math.sin(time * 3) * 0.2;
 
             renderer.render(scene, camera);
@@ -353,8 +338,7 @@
 
         window.addEventListener('resize', onResize);
 
-        // ----- CONSOLA (detalle extra) -----
-        console.log('❤️ Para Raúl - Te quiero hermano');
+        console.log('❤️ Para Pato - Te quiero hermano');
         console.log('❤️ Siempre a tu lado');
     </script>
 </body>
